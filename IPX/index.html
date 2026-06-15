@@ -606,10 +606,10 @@
            MOBILE — Left/Right Panel adjustments
            ═══════════════════════════════════════════════ */
         @media (max-width: 768px) {
-            /* ── LEFT PANEL: horizontal row, floats above jumpbar ── */
+            /* ── LEFT PANEL: horizontal row, floats above action row ── */
             .left-panel {
                 top: auto;
-                bottom: 94px;
+                bottom: 160px;
                 left: 12px;
                 right: 12px;
                 transform: none;
@@ -633,6 +633,7 @@
                 background: var(--surface-2);
                 border-radius: 18px;
                 min-height: 68px;
+                overflow: visible;
             }
 
             .property-type:hover { transform: none; background: var(--surface-3); }
@@ -646,8 +647,9 @@
                 flex-shrink: 0;
             }
             .pt-icon svg { width: 22px; height: 22px; }
-            .pt-name { font-size: 16px; }
-            .pt-sub { font-size: 9.5px; letter-spacing: 1.4px; }
+            .pt-text { flex: 1; min-width: 0; overflow: hidden; }
+            .pt-name { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .pt-sub { font-size: 9.5px; letter-spacing: 1.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             .pt-arrow { display: none; }
 
             /* ── TOP CONTROLS: bigger, label visible ── */
@@ -1097,44 +1099,7 @@
             to { transform: scale(4); opacity: 0; }
         }
 
-        @media (max-width: 768px) {
-            .jumpbar {
-                bottom: 16px;
-                padding: 5px;
-                gap: 0;
-                /* limit width so it doesn't overlap side buttons */
-                max-width: calc(100vw - 28px);
-            }
-
-            .jumpbar-brand {
-                padding: 0 14px 0 16px;
-                height: 44px;
-            }
-
-            .jumpbar-brand-line { font-size: 7.5px; letter-spacing: 2.5px; }
-            .jumpbar-brand-name { font-size: 14px; }
-
-            /* Show icon + label, bigger tap target */
-            .jumpbar-item {
-                padding: 10px 14px;
-                gap: 6px;
-                min-height: 44px;
-            }
-
-            .jumpbar-item span {
-                display: block;
-                font-size: 10px;
-                letter-spacing: 1.2px;
-            }
-
-            .jumpbar-item svg { width: 18px; height: 18px; }
-        }
-
-        @media (max-width: 420px) {
-            .jumpbar-brand { display: none; }
-            .jumpbar-item { padding: 10px 12px; gap: 5px; }
-            .jumpbar-item span { font-size: 9.5px; letter-spacing: 1px; }
-        }
+        /* (redundant mobile jumpbar block removed — see comprehensive block below) */
 
         /* Hide old dock if still present */
         .dock-wrap { display: none !important; }
@@ -1676,12 +1641,20 @@
                 bottom: 16px;
                 left: 12px;
                 right: 12px;
-                transform: none;
+                transform: none !important;
                 width: calc(100% - 24px);
+                max-width: calc(100% - 24px);
+                box-sizing: border-box;
                 justify-content: space-around;
                 padding: 6px 6px;
                 border-radius: 26px;
                 gap: 0;
+                animation: jumpbar-rise-mobile 0.9s var(--ease-out) 0.8s forwards;
+            }
+
+            @keyframes jumpbar-rise-mobile {
+                from { opacity: 0; transform: translateY(24px); }
+                to { opacity: 1; transform: translateY(0); }
             }
 
             /* Hide brand — items need the space */
@@ -1732,9 +1705,9 @@
                 letter-spacing: 1px;
             }
 
-            /* ── DAY SLIDER: above action row ── */
+            /* ── DAY SLIDER: above left panel cards ── */
             .day-slider-wrap {
-                bottom: 158px;
+                bottom: 240px;
                 width: calc(100vw - 24px);
                 left: 12px;
                 right: 12px;
@@ -1844,9 +1817,9 @@
                 letter-spacing: 0.8px;
             }
 
-            /* Slider above action row */
+            /* Slider above left panel cards */
             .day-slider-wrap {
-                bottom: 148px;
+                bottom: 235px;
             }
         }
 
@@ -1864,7 +1837,7 @@
             .enquiry-btn, #enquiryBtn { font-size: 10px !important; padding: 12px 18px !important; bottom: 88px !important; }
             .current-status-btn { padding: 12px 12px; bottom: 88px; font-size: 10px; }
             .current-status-btn span:last-child { display: inline !important; font-size: 10px; }
-            .day-slider-wrap { bottom: 145px; }
+            .day-slider-wrap { bottom: 230px; }
         }
 
         /* ──────────────────────────────────────────────
@@ -1875,7 +1848,7 @@
                 .jumpbar { bottom: calc(16px + env(safe-area-inset-bottom)); }
                 .enquiry-btn, #enquiryBtn { bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
                 .current-status-btn { bottom: calc(96px + env(safe-area-inset-bottom)); }
-                .day-slider-wrap { bottom: calc(158px + env(safe-area-inset-bottom)); }
+                .day-slider-wrap { bottom: calc(240px + env(safe-area-inset-bottom)); }
             }
         }
     </style>
