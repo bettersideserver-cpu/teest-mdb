@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MDB · Spatial Intelligence</title>
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ——— WHITE / EDITORIAL THEME ——— */
+      --bg-0: #F5F2EB;
+      --bg-tint: #EDE8DD;
+
+      --surface-1: rgba(255, 255, 255, 0.72);
+      --surface-2: rgba(255, 255, 255, 0.88);
+      --surface-3: rgba(255, 255, 255, 0.98);
+
+      --ink: #17181D;
+      --ink-mid: rgba(23, 24, 29, 0.62);
+      --ink-dim: rgba(23, 24, 29, 0.40);
+      --ink-faint: rgba(23, 24, 29, 0.22);
+      --ink-trace: rgba(23, 24, 29, 0.09);
+
+      --line: rgba(23, 24, 29, 0.07);
+      --line-hi: rgba(23, 24, 29, 0.12);
+
+      --gold: #A8782A;
+      --gold-deep: #7A561B;
+      --gold-bright: #C89A3F;
+      --gold-soft: rgba(168, 120, 42, 0.09);
+      --gold-tint: rgba(168, 120, 42, 0.14);
+      --line-gold: rgba(168, 120, 42, 0.30);
+      --line-gold-hi: rgba(168, 120, 42, 0.50);
+
+      --forest: #1F7A5C;
+      --forest-soft: rgba(31, 122, 92, 0.12);
+      --ruby: #B23A2B;
+      --ruby-soft: rgba(178, 58, 43, 0.10);
+
+      --f-display: 'Instrument Serif', serif;
+      --f-ui: 'Outfit', sans-serif;
+      --f-mono: 'JetBrains Mono', monospace;
+
+      --blur: blur(22px) saturate(160%);
+      --shadow-xs: 0 2px 6px rgba(23,24,29,0.04), 0 1px 2px rgba(23,24,29,0.03);
+      --shadow-sm: 0 6px 16px rgba(23,24,29,0.06), 0 2px 4px rgba(23,24,29,0.04);
+      --shadow: 0 14px 36px rgba(23,24,29,0.08), 0 4px 10px rgba(23,24,29,0.05);
+      --shadow-lg: 0 28px 64px rgba(23,24,29,0.12), 0 8px 20px rgba(23,24,29,0.06);
+
+      --r-xs: 4px;
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 18px;
+      --r-pill: 999px;
+    }
+
+    html, body { width: 100%; height: 100vh; }
+    body {
+      font-family: var(--f-ui);
+      background: var(--bg-0);
+      color: var(--ink);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    #map {
+      position: fixed; inset: 0;
+      width: 100%; height: 100vh;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(168,120,42,0.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, rgba(31,122,92,0.04) 0%, transparent 55%),
+        var(--bg-0);
+    }
+
+    .grain {
+      position: fixed; inset: 0; z-index: 900; pointer-events: none;
+      opacity: 0.22; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    }
+    .vignette {
+      position: fixed; inset: 0; z-index: 901; pointer-events: none;
+      background: radial-gradient(ellipse 95% 75% at center, transparent 55%, rgba(23,24,29,0.08) 100%);
+    }
+
+    /* CROSSHAIR */
+    .crosshair {
+      position: fixed; top: 50%; left: 50%; z-index: 902;
+      width: 84px; height: 84px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0.55;
+      animation: targetBreathe 4s ease-in-out infinite;
+    }
+    .crosshair svg { width: 100%; height: 100%; }
+    .crosshair .ring { stroke: var(--gold); stroke-width: 0.5; fill: none; opacity: 0.45; }
+    .crosshair .corner { stroke: var(--gold); stroke-width: 1.2; fill: none; }
+    .crosshair .tick { stroke: var(--gold); stroke-width: 1; }
+    .crosshair-label {
+      position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      margin-top: 6px;
+      font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.25em;
+      color: var(--gold); opacity: 0.7; white-space: nowrap;
+    }
+    @keyframes targetBreathe {
+      0%, 100% { opacity: 0.48; }
+      50% { opacity: 0.65; }
+    }
+
+    /* TOP LEFT */
+    #topLeft {
+      position: fixed; top: 20px; left: 20px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 10px;
+      animation: slideInL 0.7s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    #wordmark {
+      display: flex; align-items: stretch;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .wm-bar {
+      width: 3px;
+      background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+      flex-shrink: 0;
+    }
+    .wm-crest {
+      padding: 10px 0 10px 12px;
+      display: flex; align-items: center;
+      border-right: 1px solid var(--line);
+    }
+    .wm-crest svg { width: 26px; height: 26px; display: block; }
+    .wm-inner {
+      padding: 10px 18px 10px 14px;
+      display: flex; flex-direction: column; gap: 1px;
+      position: relative;
+    }
+    .wm-row-top { display: flex; align-items: baseline; gap: 7px; }
+    .wm-brand {
+      font-family: var(--f-display);
+      font-size: 26px; font-weight: 400;
+      color: var(--ink); letter-spacing: 0.02em;
+      line-height: 1;
+    }
+    .wm-brand-accent {
+      font-family: var(--f-display);
+      font-size: 26px; font-style: italic;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .wm-live {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--forest);
+      box-shadow: 0 0 8px rgba(31,122,92,0.55);
+      margin-left: 4px; align-self: center;
+      animation: livePulse 2.4s ease-in-out infinite;
+    }
+    .wm-sub {
+      font-family: var(--f-mono); font-size: 8.5px;
+      color: var(--gold); letter-spacing: 0.28em;
+      text-transform: uppercase; margin-top: 1px;
+    }
+    .wm-sub .dot-small { display: inline-block; width: 2px; height: 2px; background: var(--gold); border-radius: 50%; margin: 0 5px 2px; }
+
+    /* SEARCH */
+    #searchWrap { position: relative; width: 310px; }
+    #searchBox {
+      width: 100%;
+      padding: 13px 56px 13px 44px;
+      background: var(--surface-1);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-md);
+      color: var(--ink);
+      font-family: var(--f-ui); font-size: 13px; font-weight: 400;
+      outline: none; letter-spacing: 0.01em;
+      transition: all 0.22s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    #searchBox::placeholder { color: var(--ink-dim); font-weight: 400; }
+    #searchBox:focus {
+      border-color: var(--line-gold-hi);
+      box-shadow: 0 0 0 3px rgba(168,120,42,0.10), var(--shadow);
+      background: var(--surface-3);
+    }
+    #searchIconEl {
+      position: absolute; top: 50%; left: 15px;
+      transform: translateY(-50%);
+      pointer-events: none; opacity: 0.55;
+      transition: opacity 0.2s;
+    }
+    #searchBox:focus ~ #searchIconEl { opacity: 0.9; }
+    .search-kbd {
+      position: absolute; top: 50%; right: 13px;
+      transform: translateY(-50%);
+      font-family: var(--f-mono); font-size: 9px;
+      color: var(--ink-dim); letter-spacing: 0.1em;
+      padding: 3px 6px; border: 1px solid var(--line-hi);
+      border-radius: var(--r-xs); background: rgba(23,24,29,0.03);
+      pointer-events: none;
+    }
+    #suggestions {
+      position: absolute; top: calc(100% + 8px); left: 0; width: 100%;
+      background: var(--surface-3);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-md);
+      overflow: hidden; z-index: 1001;
+      font-family: var(--f-ui); font-size: 13px;
+      color: var(--ink); display: none;
+      box-shadow: var(--shadow-lg);
+    }
+    #suggestions > div {
+      padding: 11px 16px; cursor: pointer;
+      border-bottom: 1px solid var(--line);
+      transition: all 0.15s ease;
+      font-size: 13px; color: var(--ink-mid);
+    }
+    #suggestions > div:last-child { border-bottom: none; }
+    #suggestions > div:hover {
+      background: var(--gold-soft);
+      color: var(--ink);
+      padding-left: 20px;
+    }
+
+    #quickTags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .q-tag {
+      font-family: var(--f-mono); font-size: 9px;
+      color: var(--ink-mid); letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      background: var(--surface-1);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line);
+      border-radius: var(--r-pill);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .q-tag:hover {
+      color: var(--gold);
+      border-color: var(--line-gold);
+      background: var(--gold-soft);
+    }
+
+    /* ════════════════════════════════════════
+       NEARBY FILTER PILL — fixed: nowrap so X stays inline
+       ════════════════════════════════════════ */
+    #nearbyPanel {
+      position: fixed; top: 20px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-pill);
+      padding: 5px;
+      box-shadow: var(--shadow);
+      animation: fadeDown 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    #nearbyPanel::before {
+      content: 'PROXIMITY';
+      position: absolute; top: -18px; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--f-mono); font-size: 8.5px;
+      letter-spacing: 0.3em; color: var(--ink-faint);
+    }
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 9px 20px;
+      border: 1px solid transparent;
+      border-radius: var(--r-pill);
+      background: transparent;
+      color: var(--ink-mid);
+      font-family: var(--f-ui); font-size: 12px;
+      font-weight: 500; cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: all 0.2s ease;
+    }
+    .filter-btn:hover {
+      background: rgba(23,24,29,0.04);
+      color: var(--ink);
+      border-color: var(--line-hi);
+    }
+    .filter-btn.active {
+      background: linear-gradient(180deg, rgba(168,120,42,0.16) 0%, rgba(168,120,42,0.08) 100%);
+      color: var(--gold-deep);
+      border-color: var(--line-gold);
+      box-shadow: inset 0 1px 0 rgba(168,120,42,0.2);
+    }
+    #nearbyPanel .sep {
+      flex-shrink: 0;
+      width: 1px; height: 18px;
+      background: var(--line-hi);
+      margin: 0 4px;
+    }
+    #clearFilterBtn {
+      flex-shrink: 0;
+      width: 30px; height: 30px;
+      min-width: 30px;
+      border-radius: 50%;
+      background: var(--ruby-soft);
+      border: 1px solid rgba(178,58,43,0.22);
+      color: var(--ruby); font-size: 11px;
+      cursor: pointer;
+      display: none;
+      align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    #clearFilterBtn:hover {
+      background: rgba(178,58,43,0.16);
+      color: #8F2E23;
+      transform: rotate(90deg);
+    }
+
+    /* TOP RIGHT */
+    #topRight {
+      position: fixed; top: 20px; right: 20px; z-index: 1000;
+      animation: slideInR 0.7s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    #roadToggle {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-md);
+      color: var(--ink-mid);
+      font-family: var(--f-mono); font-size: 10px;
+      font-weight: 500; cursor: pointer;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      transition: all 0.22s;
+      box-shadow: var(--shadow-sm);
+    }
+    #roadToggle:hover {
+      border-color: var(--line-gold);
+      color: var(--ink);
+    }
+    .rdot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--forest);
+      box-shadow: 0 0 8px rgba(31,122,92,0.55);
+      animation: livePulse 2.4s ease-in-out infinite;
+    }
+
+    /* LEFT RAIL */
+    #leftRail {
+      display: none;
+    }
+    .rail-btn {
+      width: 40px; height: 40px;
+      background: transparent; border: none;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-mid);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .rail-btn:hover {
+      background: var(--gold-soft);
+      color: var(--gold);
+    }
+    .rail-btn.active {
+      background: var(--gold-tint);
+      color: var(--gold-deep);
+    }
+    .rail-btn svg { width: 18px; height: 18px; }
+    .rail-sep {
+      height: 1px; background: var(--line);
+      margin: 5px 8px;
+    }
+    .rail-tooltip {
+      position: absolute; left: calc(100% + 12px);
+      top: 50%; transform: translateY(-50%);
+      background: var(--surface-3);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-sm);
+      padding: 6px 10px;
+      font-family: var(--f-mono); font-size: 9.5px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink); white-space: nowrap;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.18s, transform 0.18s;
+      box-shadow: var(--shadow-sm);
+    }
+    .rail-btn:hover .rail-tooltip {
+      opacity: 1;
+      transform: translateY(-50%) translateX(2px);
+    }
+    .rail-tooltip .kbd {
+      display: inline-block; margin-left: 6px;
+      padding: 1px 5px; font-size: 8.5px;
+      background: rgba(23,24,29,0.05);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      color: var(--ink-mid);
+    }
+
+    /* RIGHT INSTRUMENTS */
+    #rightInstruments {
+      position: fixed; top: 50%; right: 20px;
+      transform: translateY(-50%);
+      z-index: 999;
+      display: flex; flex-direction: column;
+      gap: 12px; align-items: flex-end;
+      animation: slideInR 0.7s 0.35s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .compass {
+      width: 96px; height: 96px;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    .compass::before {
+      content: ''; position: absolute;
+      inset: 8px; border-radius: 50%;
+      border: 1px solid var(--line);
+    }
+    .compass svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .compass-label {
+      position: absolute;
+      font-family: var(--f-mono); font-size: 9px;
+      font-weight: 500; letter-spacing: 0.1em;
+    }
+    .compass-label.n { top: 6px; left: 50%; transform: translateX(-50%); color: var(--gold); }
+    .compass-label.s { bottom: 6px; left: 50%; transform: translateX(-50%); color: var(--ink-dim); }
+    .compass-label.e { right: 7px; top: 50%; transform: translateY(-50%); color: var(--ink-dim); }
+    .compass-label.w { left: 8px; top: 50%; transform: translateY(-50%); color: var(--ink-dim); }
+    .compass-needle {
+      position: absolute; top: 50%; left: 50%;
+      transform-origin: center;
+      transform: translate(-50%, -50%);
+      animation: needleSway 7s ease-in-out infinite;
+    }
+    .compass-center {
+      position: absolute; top: 50%; left: 50%;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px rgba(168,120,42,0.6);
+      transform: translate(-50%, -50%);
+    }
+    .instrument-card {
+      min-width: 140px;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .inst-label {
+      font-family: var(--f-mono); font-size: 8.5px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 5px;
+    }
+    .inst-value { display: flex; align-items: baseline; gap: 4px; }
+    .inst-num {
+      font-family: var(--f-display); font-size: 22px;
+      color: var(--ink); line-height: 1;
+    }
+    .inst-unit {
+      font-family: var(--f-mono); font-size: 9px;
+      color: var(--gold); letter-spacing: 0.1em;
+    }
+    .scale-track {
+      height: 4px; background: rgba(23,24,29,0.05);
+      border-radius: 2px; margin-top: 8px;
+      overflow: hidden; position: relative;
+    }
+    .scale-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+      border-radius: 2px;
+      width: 62%;
+    }
+
+    /* MAPLIBRE controls */
+    .maplibregl-ctrl-group {
+      background: var(--surface-2) !important;
+      backdrop-filter: var(--blur) !important;
+      -webkit-backdrop-filter: var(--blur) !important;
+      border: 1px solid var(--line-hi) !important;
+      border-radius: var(--r-md) !important;
+      box-shadow: var(--shadow-sm) !important;
+      overflow: hidden;
+    }
+    .maplibregl-ctrl-group button {
+      background: transparent !important;
+      border: none !important;
+      border-bottom: 1px solid var(--line) !important;
+      color: var(--ink-mid) !important;
+      width: 36px !important; height: 36px !important;
+      transition: background 0.15s;
+    }
+    .maplibregl-ctrl-group button:last-child { border-bottom: none !important; }
+    .maplibregl-ctrl-group button:hover { background: var(--gold-soft) !important; }
+    .maplibregl-ctrl-group button span { filter: brightness(0.3); }
+    .maplibregl-ctrl-top-right { top: 68px !important; right: 20px !important; }
+
+    /* ROUTE HUD */
+    #distanceHud {
+      position: fixed; bottom: 20px; left: 20px; z-index: 1000;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+      display: none;
+      min-width: 260px;
+    }
+    #distanceHud::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-bright) 50%, transparent);
+      opacity: 0.7;
+    }
+    .hud-header {
+      padding: 11px 16px 10px;
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hud-label {
+      font-family: var(--f-mono); font-size: 9px;
+      letter-spacing: 0.25em; color: var(--ink-dim);
+      text-transform: uppercase; flex: 1;
+    }
+    .hud-tag {
+      font-family: var(--f-mono); font-size: 8.5px;
+      color: var(--forest); letter-spacing: 0.14em;
+      background: var(--forest-soft);
+      padding: 3px 8px; border-radius: var(--r-pill);
+      border: 1px solid rgba(31,122,92,0.22);
+    }
+    .hud-body {
+      padding: 14px 16px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .hud-row { display: flex; align-items: baseline; gap: 6px; }
+    .hud-val {
+      font-family: var(--f-display); font-size: 32px;
+      font-weight: 400; color: var(--ink);
+      line-height: 1; letter-spacing: -0.01em;
+    }
+    .hud-unit {
+      font-family: var(--f-mono); font-size: 10px;
+      color: var(--gold); letter-spacing: 0.1em;
+    }
+    .hud-lbl {
+      font-family: var(--f-ui); font-size: 10.5px;
+      color: var(--ink-dim); font-weight: 400;
+      flex: 1; text-align: right;
+    }
+    .hud-sep { height: 1px; background: var(--line); margin: 0 -16px; }
+    .hud-chart {
+      padding: 10px 16px 14px;
+      border-top: 1px solid var(--line);
+    }
+    .hud-chart-label {
+      font-family: var(--f-mono); font-size: 8.5px;
+      letter-spacing: 0.22em; color: var(--ink-faint);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex; justify-content: space-between;
+    }
+    .hud-chart-svg { width: 100%; height: 32px; display: block; }
+    .hud-chart-svg path.fill { fill: url(#goldGrad); opacity: 0.45; }
+    .hud-chart-svg path.stroke { fill: none; stroke: var(--gold); stroke-width: 1.2; }
+
+    /* ════════════════════════════════════════
+       BOTTOM-LEFT ACTION BAR
+       (replaces coords bar — kept #coordsBar id so script.js show/hide still works)
+       ════════════════════════════════════════ */
+    #coordsBar {
+      position: fixed; bottom: 20px; left: 20px; z-index: 999;
+      display: flex; align-items: center;
+      padding: 5px;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-pill);
+      box-shadow: var(--shadow);
+      animation: slideUp 0.6s 0.3s cubic-bezier(0.22,1,0.36,1) both;
+      gap: 2px;
+    }
+    .act-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--r-pill);
+      color: var(--ink-mid);
+      font-family: var(--f-ui); font-size: 12px;
+      font-weight: 500; letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .act-btn:hover {
+      background: var(--gold-soft);
+      color: var(--gold-deep);
+      border-color: var(--line-gold);
+    }
+    .act-btn svg {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+    }
+    .act-btn .a-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--forest);
+      box-shadow: 0 0 8px rgba(31,122,92,0.55);
+      animation: livePulse 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    #coordsBar .csep {
+      width: 1px; height: 18px;
+      background: var(--line-hi);
+      margin: 0 2px;
+      flex-shrink: 0;
+    }
+
+    /* PROJECTS */
+    #panel {
+      position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+      width: 282px;
+      background: var(--surface-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--line-hi);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.6s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    #panel::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent 10%, var(--gold-bright) 50%, transparent 90%);
+      opacity: 0.6;
+    }
+    #panel-header {
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .ph-left { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+    .ph-eyebrow {
+      font-family: var(--f-mono); font-size: 9px;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .ph-title {
+      font-family: var(--f-display); font-size: 22px;
+      font-weight: 400; color: var(--ink);
+      letter-spacing: 0.01em; line-height: 1.1;
+    }
+    .ph-title em { font-style: italic; color: var(--gold); }
+    .count-pill {
+      display: flex; align-items: center; justify-content: center;
+      min-width: 30px; height: 30px; padding: 0 10px;
+      background: linear-gradient(180deg, rgba(168,120,42,0.16), rgba(168,120,42,0.06));
+      border: 1px solid var(--line-gold);
+      border-radius: var(--r-pill);
+      font-family: var(--f-mono); font-size: 11.5px;
+      font-weight: 500;
+      color: var(--gold-deep);
+    }
+    #project-buttons {
+      padding: 10px 10px 12px;
+      display: flex; flex-direction: column; gap: 2px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    #project-buttons::-webkit-scrollbar { width: 4px; }
+    #project-buttons::-webkit-scrollbar-track { background: transparent; }
+    #project-buttons::-webkit-scrollbar-thumb { background: var(--line-hi); border-radius: 2px; }
+
+    #project-buttons button {
+      display: flex; align-items: center; gap: 11px;
+      width: 100%;
+      padding: 10px 12px;
+      background: transparent;
+      color: var(--ink-mid);
+      border: 1px solid transparent;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      font-family: var(--f-ui); font-size: 13px;
+      font-weight: 400;
+      text-align: left; letter-spacing: 0.01em;
+      transition: all 0.18s ease;
+      position: relative;
+    }
+    #project-buttons button .picon {
+      width: 32px; height: 32px;
+      border-radius: var(--r-sm);
+      background: linear-gradient(135deg, var(--gold-soft), rgba(168,120,42,0.03));
+      border: 1px solid rgba(168,120,42,0.18);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    #project-buttons button .picon::before {
+      content: ''; position: absolute;
+      width: 10px; height: 10px;
+      transform: rotate(45deg);
+      background: var(--gold);
+      opacity: 0.7;
+      transition: all 0.2s;
+    }
+    #project-buttons button .picon::after {
+      content: ''; position: absolute;
+      width: 4px; height: 4px;
+      background: var(--gold-bright);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--gold-bright);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #project-buttons button .pname {
+      flex: 1;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    #project-buttons button .pmeta {
+      font-family: var(--f-mono); font-size: 8.5px;
+      color: var(--ink-faint);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-right: 4px;
+    }
+    #project-buttons button .parr {
+      font-family: var(--f-mono); font-size: 11px;
+      color: var(--gold);
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: all 0.2s;
+    }
+    #project-buttons button:hover {
+      background: linear-gradient(90deg, var(--gold-soft), transparent);
+      border-color: var(--line-hi);
+      color: var(--ink);
+    }
+    #project-buttons button:hover .picon {
+      background: linear-gradient(135deg, rgba(168,120,42,0.25), rgba(168,120,42,0.05));
+      border-color: var(--line-gold-hi);
+    }
+    #project-buttons button:hover .picon::before { opacity: 1; }
+    #project-buttons button:hover .picon::after { opacity: 1; }
+    #project-buttons button:hover .parr {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    #project-buttons button:active { transform: scale(0.99); }
+
+    .ph-footer {
+      padding: 9px 14px;
+      display: flex; align-items: center;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+      background: linear-gradient(180deg, transparent, rgba(168,120,42,0.03));
+    }
+    .ph-footer .ph-f-item {
+      font-family: var(--f-mono); font-size: 9px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-faint);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .ph-footer .ph-f-item .ph-f-val { color: var(--ink-mid); }
+    .ph-footer .ph-f-sep { width: 1px; height: 9px; background: var(--line-hi); }
+    .ph-footer .ph-f-spacer { flex: 1; }
+
+    /* MARKERS */
+    .marker {
+      width: 16px; height: 16px;
+      background: radial-gradient(circle, var(--gold-bright), var(--gold));
+      border-radius: 50%; cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.9);
+      box-shadow:
+        0 0 0 4px rgba(168,120,42,0.22),
+        0 4px 14px rgba(168,120,42,0.35),
+        inset 0 1px 1px rgba(255,255,255,0.5);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
+    }
+    .marker:hover {
+      transform: scale(1.55);
+      box-shadow:
+        0 0 0 6px rgba(168,120,42,0.2),
+        0 6px 22px rgba(168,120,42,0.45),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+    }
+
+    .maplibregl-ctrl-attrib {
+      background: var(--surface-1) !important;
+      backdrop-filter: var(--blur) !important;
+      border-radius: var(--r-sm) !important;
+      border: 1px solid var(--line) !important;
+    }
+    .maplibregl-ctrl-attrib a { color: var(--ink-dim) !important; font-size: 10px !important; }
+    .maplibregl-ctrl-bottom-right { bottom: 12px !important; right: 324px !important; }
+    .maplibregl-ctrl-bottom-left { bottom: 12px !important; left: 74px !important; display: none; }
+
+    /* ANIMATIONS */
+    @keyframes slideInL {
+      from { opacity: 0; transform: translateX(-14px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInR {
+      from { opacity: 0; transform: translateX(14px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    @keyframes needleSway {
+      0%, 100% { transform: translate(-50%, -50%) rotate(-4deg); }
+      50% { transform: translate(-50%, -50%) rotate(4deg); }
+    }
+
+    @media (max-width: 1100px) {
+      #leftRail, #rightInstruments { display: none; }
+      #searchWrap { width: 260px; }
+    }
+    @media (max-width: 860px) {
+      .crosshair { display: none; }
+      .act-btn .lbl { display: none; }
+      .act-btn { padding: 9px 12px; }
+    }
+
+        /* ═══════════════════════════════════════════════
+           WALKTHROUGH VIDEO MODAL (ADDED)
+           ═══════════════════════════════════════════════ */
+        .walkthrough-overlay {
+            position: fixed; inset: 0; z-index: 13000;
+            background: rgba(0, 0, 0, 0.94);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .walkthrough-overlay.is-open { opacity: 1; pointer-events: auto; }
+        .walkthrough-close {
+            position: absolute; top: 24px; right: 24px; width: 44px; height: 44px;
+            border-radius: 50%; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06); color: #fff; font-size: 20px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.25s ease; z-index: 2;
+        }
+        .walkthrough-close:hover { background: rgba(255,255,255,0.15); border-color: rgba(168,120,42,0.5); color: var(--gold); }
+        .walkthrough-video-wrap {
+            width: 90vw; max-width: 960px; aspect-ratio: 16/9;
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+            border: 1px solid rgba(168,120,42,0.2);
+        }
+        .walkthrough-video-wrap video {
+            width: 100%; height: 100%; object-fit: contain; background: #000;
+        }
+        @media (max-width: 600px) {
+            .walkthrough-video-wrap { width: 96vw; border-radius: 8px; }
+        }
+.marker-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* dot */
+.marker-dot {
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle, #C89A3F, #A8782A);
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* button above */
+.marker-wrapper .explore-btn {
+  position: absolute;
+  bottom: 28px; /* 👈 pushes above dot */
+  background: #A8782A;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+
+  display: none;
+  white-space: nowrap;
+}
+
+/* show on active */
+.marker-wrapper.active .explore-btn {
+  display: block;
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="vignette"></div>
+
+  <!-- Map canvas -->
+  <div id="map"></div>
+
+  <!-- Center crosshair -->
+  <div class="crosshair">
+    <svg viewBox="0 0 100 100">
+      <circle class="ring" cx="50" cy="50" r="36"/>
+      <circle class="ring" cx="50" cy="50" r="22" style="opacity:0.25"/>
+      <path class="corner" d="M 10 10 L 10 22 M 10 10 L 22 10"/>
+      <path class="corner" d="M 90 10 L 90 22 M 90 10 L 78 10"/>
+      <path class="corner" d="M 10 90 L 10 78 M 10 90 L 22 90"/>
+      <path class="corner" d="M 90 90 L 90 78 M 90 90 L 78 90"/>
+      <line class="tick" x1="50" y1="44" x2="50" y2="56"/>
+      <line class="tick" x1="44" y1="50" x2="56" y2="50"/>
+    </svg>
+    <div class="crosshair-label">VIEWPORT CENTER</div>
+  </div>
+
+  <!-- TOP LEFT: Brand + Search -->
+  <div id="topLeft">
+    <div id="wordmark">
+      <div class="wm-bar"></div>
+      <div class="wm-crest">
+        <svg viewBox="0 0 32 32" fill="none">
+          <defs>
+            <linearGradient id="crestGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#C89A3F"/>
+              <stop offset="100%" stop-color="#7A561B"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 2 L28 10 L28 22 L16 30 L4 22 L4 10 Z" stroke="url(#crestGrad)" stroke-width="1.3" fill="none"/>
+          <path d="M16 8 L22 12 L22 20 L16 24 L10 20 L10 12 Z" stroke="#A8782A" stroke-width="0.9" fill="none" opacity="0.7"/>
+          <circle cx="16" cy="16" r="2" fill="#A8782A"/>
+          <line x1="16" y1="2" x2="16" y2="8" stroke="#A8782A" stroke-width="0.8" opacity="0.45"/>
+          <line x1="16" y1="24" x2="16" y2="30" stroke="#A8782A" stroke-width="0.8" opacity="0.45"/>
+        </svg>
+      </div>
+      <div class="wm-inner">
+        <div class="wm-row-top">
+          <span class="wm-brand">MDB</span>
+          <span class="wm-brand-accent">spatial</span>
+          <span class="wm-live"></span>
+        </div>
+        <span class="wm-sub">Intelligence Terminal<span class="dot-small"></span>North Region</span>
+      </div>
+    </div>
+
+    <div id="searchWrap">
+      <svg id="searchIconEl" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="7" cy="7" r="4.5" stroke="#17181D" stroke-width="1.4"/>
+        <path d="M10.5 10.5L14 14" stroke="#17181D" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <input id="searchBox" placeholder="Search location, landmark, coordinates…" autocomplete="off" />
+      <span class="search-kbd">⌘K</span>
+      <div id="suggestions"></div>
+    </div>
+
+    <div id="quickTags">
+      <span class="q-tag">Recent</span>
+      <span class="q-tag">Bookmarks</span>
+      <span class="q-tag">Nearby</span>
+      <span class="q-tag">3D</span>
+    </div>
+  </div>
+
+  <!-- TOP CENTER: Proximity Filters (X now stays inline) -->
+  <div id="nearbyPanel">
+    <button class="filter-btn" onclick="searchNearby('hospital', this)">Hospital</button>
+    <button class="filter-btn" onclick="searchNearby('mall', this)">Mall</button>
+    <button class="filter-btn" onclick="searchNearby('school', this)">School</button>
+    <button class="filter-btn" onclick="searchNearby('airport', this)">Airport</button>
+    <div class="sep"></div>
+    <button id="clearFilterBtn" onclick="clearFilter()">✕</button>
+  </div>
+
+  <!-- TOP RIGHT: Roads toggle only -->
+  <div id="topRight">
+    <button id="roadToggle">
+      <span class="rdot"></span>Roads ON
+    </button>
+  </div>
+
+  <!-- LEFT TOOL RAIL (removed) -->
+
+  <!-- RIGHT INSTRUMENTS -->
+  <div id="rightInstruments">
+    <div class="compass">
+      <svg viewBox="0 0 96 96">
+        <g stroke="rgba(23,24,29,0.2)" stroke-width="0.6">
+          <line x1="48" y1="14" x2="48" y2="18"/>
+          <line x1="48" y1="78" x2="48" y2="82"/>
+          <line x1="14" y1="48" x2="18" y2="48"/>
+          <line x1="78" y1="48" x2="82" y2="48"/>
+          <line x1="24" y1="24" x2="27" y2="27" opacity="0.6"/>
+          <line x1="72" y1="24" x2="69" y2="27" opacity="0.6"/>
+          <line x1="24" y1="72" x2="27" y2="69" opacity="0.6"/>
+          <line x1="72" y1="72" x2="69" y2="69" opacity="0.6"/>
+        </g>
+      </svg>
+      <div class="compass-label n">N</div>
+      <div class="compass-label s">S</div>
+      <div class="compass-label e">E</div>
+      <div class="compass-label w">W</div>
+      <div class="compass-needle">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <path d="M30 4 L34 30 L30 30 L26 30 Z" fill="#A8782A"/>
+          <path d="M30 56 L34 30 L30 30 L26 30 Z" fill="rgba(23,24,29,0.2)"/>
+        </svg>
+      </div>
+      <div class="compass-center"></div>
+    </div>
+
+    <div class="instrument-card">
+      <div class="inst-label">Altitude</div>
+      <div class="inst-value">
+        <span class="inst-num">247</span>
+        <span class="inst-unit">M · MSL</span>
+      </div>
+      <div class="scale-track"><div class="scale-fill"></div></div>
+    </div>
+
+    <div class="instrument-card">
+      <div class="inst-label">Scale</div>
+      <div class="inst-value">
+        <span class="inst-num">1 : 4.2k</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM LEFT: Route HUD -->
+  <div id="distanceHud">
+    <div class="hud-header">
+      <span class="hud-label">Route Analysis</span>
+      <span class="hud-tag">DRIVING</span>
+    </div>
+    <div class="hud-body">
+      <div class="hud-row">
+        <span class="hud-val" id="hudDist">—</span>
+        <span class="hud-unit">KM</span>
+        <span class="hud-lbl">Distance</span>
+      </div>
+      <div class="hud-sep"></div>
+      <div class="hud-row">
+        <span class="hud-val" id="hudTime">—</span>
+        <span class="hud-unit" id="hudTimeUnit">HR</span>
+        <span class="hud-lbl">Travel time</span>
+      </div>
+    </div>
+    <div class="hud-chart">
+      <div class="hud-chart-label">
+        <span>ELEVATION PROFILE</span>
+        <span>+124m</span>
+      </div>
+      <svg class="hud-chart-svg" viewBox="0 0 200 32" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#A8782A" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#A8782A" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path class="fill" d="M 0 28 L 15 22 L 30 24 L 50 14 L 75 18 L 95 8 L 120 12 L 145 20 L 170 16 L 200 10 L 200 32 L 0 32 Z"/>
+        <path class="stroke" d="M 0 28 L 15 22 L 30 24 L 50 14 L 75 18 L 95 8 L 120 12 L 145 20 L 170 16 L 200 10"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- BOTTOM LEFT: Action Bar -->
+  <div id="coordsBar">
+    <button class="act-btn" id="actLive">
+      <span class="a-dot"></span>
+      <span class="lbl">Live Status</span>
+    </button>
+    <div class="csep"></div>
+    <button class="act-btn" id="actBrochure">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span class="lbl">Brochure</span>
+    </button>
+    <div class="csep"></div>
+    <button class="act-btn" id="actWalkthrough">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="6 3 21 12 6 21 6 3"/>
+      </svg>
+      <span class="lbl">Walk-Through</span>
+    </button>
+  </div>
+
+  <!-- BOTTOM RIGHT: Projects -->
+  <div id="panel">
+    <div id="panel-header">
+      <div class="ph-left">
+        <span class="ph-eyebrow">Active · Portfolio</span>
+        <span class="ph-title">Proj<em>e</em>cts</span>
+      </div>
+      <span class="count-pill" id="project-count">0</span>
+    </div>
+    <div id="project-buttons"></div>
+    <div class="ph-footer">
+      <div class="ph-f-item"><span>Indexed</span><span class="ph-f-val">2.3M</span></div>
+      <div class="ph-f-sep"></div>
+      <div class="ph-f-item"><span>Tiles</span><span class="ph-f-val">847k</span></div>
+      <div class="ph-f-spacer"></div>
+      <div class="ph-f-item"><span style="color:var(--forest);">● LIVE</span></div>
+    </div>
+  </div>
+
+
+    <!-- ═══ WALKTHROUGH VIDEO MODAL (ADDED) ═══ -->
+    <div class="walkthrough-overlay" id="walkthroughOverlay">
+        <button class="walkthrough-close" id="walkthroughClose">&#x2715;</button>
+        <div class="walkthrough-video-wrap">
+            <video id="walkthroughModalVideo" controls preload="none" poster="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=960&q=80">
+                <source src="IPX/Video/MDB_The_Lutyens_Walkthrough.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+  <!-- External libs + your script.js -->
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/three@0.126.1/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.126.1/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="script.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDQmKQB31aWGGVWt1mXTEYqXm1j_NxbSE&libraries=places"></script>
+
+  <script>
+  (function () {
+
+    /* PROJECT BUTTONS: badge + icon injection */
+    var pObserver = new MutationObserver(function () {
+      var btns = document.querySelectorAll('#project-buttons button');
+      var badge = document.getElementById('project-count');
+      if (badge) badge.textContent = String(btns.length).padStart(2, '0');
+
+      btns.forEach(function (btn, i) {
+        if (btn.querySelector('.picon')) return;
+        var txt = btn.textContent.trim();
+        btn.innerHTML = '';
+        var icon = document.createElement('span'); icon.className = 'picon';
+        var name = document.createElement('span'); name.className = 'pname'; name.textContent = txt;
+        var meta = document.createElement('span'); meta.className = 'pmeta'; meta.textContent = 'P' + String(i+1).padStart(2, '0');
+        var arr  = document.createElement('span'); arr.className  = 'parr';  arr.textContent  = '→';
+        btn.append(icon, name, meta, arr);
+      });
+    });
+    var pb = document.getElementById('project-buttons');
+    if (pb) pObserver.observe(pb, { childList: true, subtree: true });
+
+    /* ROUTE HUD: intercept injected distance/time, swap with action bar */
+    var lastText = '';
+    var rObserver = new MutationObserver(function () {
+      var bodyText = document.body.innerText;
+      if (bodyText === lastText) return;
+      lastText = bodyText;
+
+      var distMatch = bodyText.match(/Distance[:\s]+([0-9.]+)\s*km/i);
+      var timeMatch = bodyText.match(/Time[:\s]+([0-9.]+)\s*(min|hr|hour|h)/i);
+
+      var hud    = document.getElementById('distanceHud');
+      var coords = document.getElementById('coordsBar');
+
+      if (distMatch || timeMatch) {
+        hud.style.display    = 'block';
+        coords.style.display = 'none';
+
+        if (distMatch) {
+          document.getElementById('hudDist').textContent = parseFloat(distMatch[1]).toFixed(1);
+        }
+        if (timeMatch) {
+          var raw  = parseFloat(timeMatch[1]);
+          var unit = (timeMatch[2] || 'min').toLowerCase();
+          if (unit === 'hr' || unit === 'hour' || unit === 'h') raw = raw * 60;
+          var hrs  = Math.floor(raw / 60);
+          var mins = Math.round(raw % 60);
+          var timeEl = document.getElementById('hudTime');
+          var unitEl = document.getElementById('hudTimeUnit');
+          if (hrs >= 1) {
+            timeEl.textContent = hrs + 'h ' + (mins > 0 ? mins + 'm' : '');
+            unitEl.textContent = '';
+          } else {
+            timeEl.textContent = mins;
+            unitEl.textContent = 'MIN';
+          }
+        }
+      } else {
+        hud.style.display    = 'none';
+        coords.style.display = 'flex';
+      }
+    });
+    rObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+    /* ════════════════════════════════════════
+       DISPLAY INTERCEPTORS
+       - #nearbyPanel: force 'flex' when shown (keeps X button inline)
+       - #clearFilterBtn: force 'flex' when shown (keeps it centered)
+       ════════════════════════════════════════ */
+    var _cssSetProperty = CSSStyleDeclaration.prototype.setProperty;
+
+    var np = document.getElementById('nearbyPanel');
+    if (np) {
+      Object.defineProperty(np.style, 'display', {
+        set: function (val) {
+          _cssSetProperty.call(this, 'display', val === 'none' ? 'none' : 'flex');
+        },
+        get: function () {
+          return this.getPropertyValue('display');
+        },
+        configurable: true
+      });
+    }
+
+    var cfb = document.getElementById('clearFilterBtn');
+    if (cfb) {
+      Object.defineProperty(cfb.style, 'display', {
+        set: function (val) {
+          _cssSetProperty.call(this, 'display', val === 'none' ? 'none' : 'flex');
+          if (val !== 'none') {
+            _cssSetProperty.call(this, 'align-items', 'center');
+            _cssSetProperty.call(this, 'justify-content', 'center');
+          }
+        },
+        get: function () {
+          return this.getPropertyValue('display');
+        },
+        configurable: true
+      });
+    }
+
+    /* RAIL BUTTONS: removed */
+
+    /* SEARCH KEYBOARD SHORTCUT */
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        var sb = document.getElementById('searchBox');
+        if (sb) sb.focus();
+      }
+    });
+
+    /* Action button hooks — wire these in your script.js */
+    var liveBtn = document.getElementById('actLive');
+    var brochureBtn = document.getElementById('actBrochure');
+    var walkBtn = document.getElementById('actWalkthrough');
+    if (liveBtn) liveBtn.addEventListener('click', function () {
+      if (window.showLiveStatus) window.showLiveStatus();
+    });
+
+    /* ═══ BROCHURE: download PDF ═══ */
+    if (brochureBtn) brochureBtn.addEventListener('click', function () {
+      var a = document.createElement('a');
+      a.href = 'IPX/The Lutyens Gatefold Brochure.pdf';
+      a.download = 'The Lutyens Gatefold Brochure.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    /* ═══ WALKTHROUGH: open video modal ═══ */
+    var wtOverlay = document.getElementById('walkthroughOverlay');
+    var wtVideo   = document.getElementById('walkthroughModalVideo');
+    var wtClose   = document.getElementById('walkthroughClose');
+    function openWalkthrough() {
+      if (!wtOverlay || !wtVideo) return;
+      wtOverlay.classList.add('is-open');
+      wtVideo.play().catch(function(){});
+    }
+    function closeWalkthrough() {
+      if (!wtOverlay || !wtVideo) return;
+      wtOverlay.classList.remove('is-open');
+      wtVideo.pause();
+      wtVideo.currentTime = 0;
+    }
+    if (walkBtn) walkBtn.addEventListener('click', openWalkthrough);
+    if (wtClose) wtClose.addEventListener('click', closeWalkthrough);
+    if (wtOverlay) wtOverlay.addEventListener('click', function(e) {
+      if (e.target === wtOverlay) closeWalkthrough();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && wtOverlay && wtOverlay.classList.contains('is-open')) closeWalkthrough();
+    });
+    /* Also expose globally so script.js can call them */
+    window.downloadBrochure = function() { if (brochureBtn) brochureBtn.click(); };
+    window.startWalkthrough = openWalkthrough;
+
+  })();
+  </script>
+
+</body>
+</html>

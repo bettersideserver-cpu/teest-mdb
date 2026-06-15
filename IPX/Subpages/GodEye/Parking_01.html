@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+ 
+  <title>MDB The Lutyens</title>
+  <link rel="stylesheet" href="./../../../wbn05d6fbh.css" />
+  <link rel="stylesheet" href="./../../../JS/CSS/Whatsapp-CSS.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+        /* ═══ PREMIUM OVERLAY — ADDED (does not override original) ═══ */
+        :root {
+            --gold: #C9A87C; --gold-light: #E4C89A; --gold-dark: #A8875C; --ink: #0A0B0D;
+            --glass: rgba(14, 15, 18, 0.72); --glass-border: rgba(201, 168, 124, 0.16);
+            --glass-border-hover: rgba(201, 168, 124, 0.42); --text-muted: rgba(255, 255, 255, 0.55);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5); --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+            --font-display: 'Cormorant Garamond', serif; --font-ui: 'Outfit', sans-serif;
+            --ease-out: cubic-bezier(0.22, 0.68, 0, 1.04); --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --blur: blur(28px) saturate(1.5);
+        }
+        .left-panel { position: fixed; top: 50%; left: 24px; transform: translateY(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; width: 248px; opacity: 0; animation: slide-in-left 0.9s var(--ease-out) 0.6s forwards; }
+        @keyframes slide-in-left { from { opacity: 0; transform: translateY(-50%) translateX(-24px); } to { opacity: 1; transform: translateY(-50%) translateX(0); } }
+        .panel-header { padding: 0 8px 2px; user-select: none; }
+        .panel-label { font-family: var(--font-ui); font-size: 9px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: 0.8; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); }
+        .property-type { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; text-decoration: none; cursor: pointer; background: rgba(8, 9, 12, 0.88); border: 1px solid var(--glass-border); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: var(--shadow-md); transition: all 0.4s var(--ease-out); position: relative; overflow: hidden; }
+        .pt-shimmer { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(201, 168, 124, 0.08) 45%, transparent 55%); transform: scaleY(0); transition: transform 0.45s var(--ease-out); transform-origin: center; }
+        .property-type:hover .pt-shimmer { transform: scaleY(1); }
+        .property-type:hover { border-color: rgba(201, 168, 124, 0.4); transform: translateX(6px); box-shadow: var(--shadow-lg), 0 0 30px rgba(201, 168, 124, 0.08); }
+        .pt-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: linear-gradient(145deg, rgba(201, 168, 124, 0.12), rgba(201, 168, 124, 0.04)); border: 1px solid rgba(201, 168, 124, 0.15); flex-shrink: 0; }
+        .pt-icon svg { width: 18px; height: 18px; stroke: var(--gold); transition: all 0.3s ease; }
+        .property-type:hover .pt-icon svg { transform: scale(1.1); filter: drop-shadow(0 2px 6px rgba(201, 168, 124, 0.3)); }
+        .pt-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+        .pt-name { font-family: var(--font-ui); font-size: 13px; font-weight: 600; color: #fff; letter-spacing: 0.4px; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); }
+        .pt-sub { font-family: var(--font-ui); font-size: 10px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255, 255, 255, 0.65); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+        .pt-arrow { margin-left: auto; width: 16px; height: 16px; opacity: 0; transition: all 0.3s var(--ease-out); transform: translateY(-50%) translateX(-6px); position: absolute; right: 14px; top: 50%; }
+        .pt-arrow svg { width: 16px; height: 16px; stroke: var(--gold); stroke-width: 2; }
+        .property-type:hover .pt-arrow { opacity: 0.7; transform: translateY(-50%) translateX(0); }
+        .top-controls { position: fixed; top: 24px; right: 24px; z-index: 10000; display: flex; align-items: center; gap: 8px; opacity: 0; animation: slide-in-right 0.8s var(--ease-out) 0.7s forwards; }
+        @keyframes slide-in-right { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+        .control-btn { display: flex; align-items: center; gap: 7px; padding: 10px 16px; border-radius: 12px; text-decoration: none; cursor: pointer; background: rgba(8, 9, 12, 0.85); border: 1px solid var(--glass-border); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35); position: relative; overflow: hidden; color: rgba(255, 255, 255, 0.85); font-family: var(--font-ui); font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.35s var(--ease-out); }
+        .control-btn svg { width: 15px; height: 15px; stroke: currentColor; transition: transform 0.35s var(--ease-spring); position: relative; z-index: 1; }
+        .control-btn span { position: relative; z-index: 1; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4); }
+        .control-btn:hover { border-color: rgba(201, 168, 124, 0.4); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(201, 168, 124, 0.08); color: var(--gold-light); }
+        .control-btn:hover svg { transform: scale(1.15); }
+        .menu-btn { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; cursor: pointer; background: rgba(8, 9, 12, 0.85); border: 1px solid var(--glass-border); backdrop-filter: var(--blur); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35); transition: all 0.35s var(--ease-out); }
+        .menu-btn:hover { border-color: rgba(201, 168, 124, 0.4); transform: translateY(-2px); }
+        .menu-btn-lines { width: 18px; height: 13px; position: relative; }
+        .menu-btn-lines span { position: absolute; left: 0; width: 100%; height: 1.5px; background: #fff; border-radius: 2px; transition: all 0.35s var(--ease-out); }
+        .menu-btn-lines span:nth-child(1) { top: 0; }
+        .menu-btn-lines span:nth-child(2) { top: 50%; transform: translateY(-50%); width: 65%; }
+        .menu-btn-lines span:nth-child(3) { bottom: 0; }
+        .menu-btn.is-open .menu-btn-lines span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
+        .menu-btn.is-open .menu-btn-lines span:nth-child(2) { opacity: 0; transform: translateX(-16px); }
+        .menu-btn.is-open .menu-btn-lines span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+        .dropdown-menu { position: fixed; top: 80px; right: 24px; z-index: 10001; width: 270px; background: rgba(8, 9, 12, 0.95); border: 1px solid var(--glass-border); border-radius: 16px; backdrop-filter: blur(40px) saturate(1.8); box-shadow: var(--shadow-lg); padding: 6px; opacity: 0; transform: translateY(-12px) scale(0.95); pointer-events: none; transition: all 0.35s var(--ease-spring); }
+        .dropdown-menu.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+        .dropdown-menu::before { content: ''; position: absolute; top: -6px; right: 20px; width: 12px; height: 12px; background: rgba(8, 9, 12, 0.95); border-left: 1px solid var(--glass-border); border-top: 1px solid var(--glass-border); transform: rotate(45deg); }
+        .dropdown-header { padding: 14px 16px 10px; }
+        .dropdown-header-label { font-family: var(--font-ui); font-size: 8px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); opacity: 0.8; }
+        .dropdown-header-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 0.5px; margin-top: 2px; }
+        .dropdown-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; text-decoration: none; color: rgba(255, 255, 255, 0.8); transition: all 0.3s ease; cursor: pointer; }
+        .dropdown-item:hover { background: rgba(201, 168, 124, 0.08); color: #fff; }
+        .dropdown-item-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(201, 168, 124, 0.08); border: 1px solid rgba(201, 168, 124, 0.1); flex-shrink: 0; }
+        .dropdown-item-icon svg { width: 15px; height: 15px; stroke: var(--gold); }
+        .dropdown-item-text { display: flex; flex-direction: column; gap: 1px; }
+        .dropdown-item-title { font-family: var(--font-ui); font-size: 12.5px; font-weight: 500; letter-spacing: 0.3px; }
+        .dropdown-item-sub { font-family: var(--font-ui); font-size: 10px; font-weight: 400; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 2px; color: var(--text-muted); }
+        .dropdown-item-arrow { margin-left: auto; stroke: rgba(255, 255, 255, 0.3); transition: all 0.3s ease; }
+        .dropdown-item:hover .dropdown-item-arrow { stroke: var(--gold); opacity: 1; transform: translateX(3px); }
+        .enquiry-btn { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 10001; writing-mode: vertical-rl; text-orientation: mixed; padding: 24px 11px; background: linear-gradient(180deg, var(--gold-light), var(--gold), var(--gold-dark)); color: var(--ink); font-family: var(--font-ui); font-weight: 700; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; border: none; border-radius: 10px 0 0 10px; cursor: pointer; white-space: nowrap; box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3), -2px 0 12px rgba(201, 168, 124, 0.18); transition: all 0.35s var(--ease-out); }
+        .enquiry-btn::before { content: ''; position: absolute; inset: 0; border-radius: 10px 0 0 10px; background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent 40%, transparent 60%, rgba(255,255,255,0.05)); pointer-events: none; }
+        .enquiry-btn:hover { padding: 24px 14px; box-shadow: -8px 0 36px rgba(0, 0, 0, 0.35), -2px 0 20px rgba(201, 168, 124, 0.25); }
+        @media (max-width: 600px) { .enquiry-btn { font-size: 10px; padding: 16px 8px; letter-spacing: 1.5px; } }
+        .enquiry-overlay-wrap { position: fixed; inset: 0; display: flex; align-items: stretch; justify-content: flex-end; z-index: 12000; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+        .enquiry-overlay-wrap.is-open { opacity: 1; pointer-events: auto; }
+        .enquiry-modal-panel { width: 370px; height: 100%; display: flex; flex-direction: column; background: rgba(12, 13, 16, 0.97); border-left: 1px solid var(--glass-border); backdrop-filter: blur(40px); box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5); transform: translateX(100%); transition: transform 0.45s var(--ease-out); }
+        .enquiry-overlay-wrap.is-open .enquiry-modal-panel { transform: translateX(0); }
+        .enq-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 22px 18px; border-bottom: 1px solid var(--glass-border); }
+        .enq-title { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: #fff; letter-spacing: 0.5px; }
+        .enq-close { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04); color: rgba(255, 255, 255, 0.6); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.25s ease; }
+        .enq-close:hover { background: rgba(255, 255, 255, 0.1); }
+        .enq-body { padding: 22px; overflow-y: auto; flex: 1; }
+        .enq-form { display: grid; gap: 12px; width: 100%; box-sizing: border-box; }
+        .enq-input, .enq-phone { width: 100%; padding: 13px 16px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.06); color: #fff; font-family: var(--font-ui); font-size: 13px; transition: border-color 0.3s ease; box-sizing: border-box; }
+        .enq-input:focus { outline: none; border-color: var(--gold); }
+        .enq-input::placeholder { color: rgba(255,255,255,0.35); }
+        .enq-phone { display: flex; padding: 0; background: rgba(255, 255, 255, 0.06); }
+        .enq-phone select { width: 80px; padding: 13px 8px 13px 14px; background: transparent; border: none; color: var(--gold); font-family: var(--font-ui); font-size: 13px; border-right: 1px solid var(--glass-border); cursor: pointer; appearance: none; }
+        .enq-phone input { flex: 1; padding: 13px 14px; background: transparent; border: none; color: #fff; font-family: var(--font-ui); font-size: 13px; }
+        .enq-phone input::placeholder { color: rgba(255,255,255,0.35); }
+        .enq-phone input:focus { outline: none; }
+        .enq-submit { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: var(--ink); font-family: var(--font-ui); font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 6px 20px rgba(201, 168, 124, 0.25); transition: all 0.3s ease; }
+        .enq-submit:hover { box-shadow: 0 8px 28px rgba(201, 168, 124, 0.35); transform: translateY(-1px); }
+        .enq-call { display: block; width: 100%; text-align: center; padding: 11px 1px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; background: #C9A87C; color: #111; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transition: all 0.2s ease; }
+        .enq-call:hover { background: #0078be; color: #fff; }
+        @media (max-width: 560px) { .enquiry-modal-panel { width: 100vw; } }
+        .ambient-particles { position: fixed; inset: 0; z-index: 9998; pointer-events: none; overflow: hidden; }
+        .particle { position: absolute; background: var(--gold); border-radius: 50%; opacity: 0; animation: particle-float linear infinite; }
+        @keyframes particle-float { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 10% { opacity: 0.4; } 90% { opacity: 0.2; } 100% { opacity: 0; transform: translateY(-10vh) scale(1); } }
+        @media (max-width: 768px) {
+            .left-panel { top: auto; bottom: 110px; left: 12px; right: 12px; transform: none; width: auto; flex-direction: row; gap: 8px; animation: slide-in-bottom 0.8s var(--ease-out) 0.6s forwards; }
+            @keyframes slide-in-bottom { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+            .panel-header { display: none; }
+            .property-type { flex: 1; padding: 10px 12px; border-radius: 12px; }
+            .pt-name { font-size: 11px; } .pt-sub { font-size: 8px; } .pt-arrow { display: none; }
+            .top-controls { top: 16px; right: 16px; gap: 6px; }
+            .control-btn { padding: 8px 12px; font-size: 10px; border-radius: 10px; }
+            .control-btn span { display: none; }
+        }
+  </style>
+</head>
+
+<body>
+
+    <!-- ═══ LEFT PANEL (ADDED) ═══ -->
+    <aside class="left-panel" aria-label="Residence Types">
+        <div class="panel-header"><span class="panel-label">Residences</span></div>
+        <a class="property-type" href="../../Subpages/Penthouse/Lobby_Top_Floor_1.html" data-type="skyvilla">
+            <span class="pt-shimmer"></span>
+            <div class="pt-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12" /><path d="M9 21V13h6v8" /><path d="M3 21h18" /><circle cx="12" cy="17" r="1" fill="currentColor" /><path d="M12 3v3" /><path d="M10 5l2-2 2 2" /></svg></div>
+            <div class="pt-text"><span class="pt-name">Skyvilla Penthouse</span><span class="pt-sub">Ultra Luxury</span></div>
+            <div class="pt-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg></div>
+        </a>
+        <a class="property-type" href="../../Subpages/3BHK/Lobby_Top.html" data-type="3bhk">
+            <span class="pt-shimmer"></span>
+            <div class="pt-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="1.5" /><path d="M3 12h18" /><path d="M12 7v13" /><path d="M7 4l5-2 5 2" /></svg></div>
+            <div class="pt-text"><span class="pt-name">3 BHK Residences</span><span class="pt-sub">Premium Homes</span></div>
+            <div class="pt-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg></div>
+        </a>
+    </aside>
+
+    <!-- ═══ TOP CONTROLS (ADDED) ═══ -->
+    <div class="top-controls">
+        <a class="control-btn" href="../../../Gallery.html"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg><span>Gallery</span></a>
+        <a class="control-btn" href="../../../Walkthrough.html"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" /></svg><span>Walkthrough</span></a>
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><div class="menu-btn-lines"><span></span><span></span><span></span></div></button>
+    </div>
+
+    <!-- ═══ DROPDOWN MENU (ADDED) ═══ -->
+    <div class="dropdown-menu" id="dropdownMenu" role="menu" aria-hidden="true">
+        <div class="dropdown-header"><div class="dropdown-header-label">Explore</div><div class="dropdown-header-title">The Lutyens</div></div>
+        <a class="dropdown-item" href="./../../../documents/MDB-Lutyens-Brochure.pdf" download role="menuitem">
+            <div class="dropdown-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><path d="M12 18v-6" /><path d="M9 15l3 3 3-3" /></svg></div>
+            <div class="dropdown-item-text"><span class="dropdown-item-title">Download Brochure</span><span class="dropdown-item-sub">PDF &middot; 4.2 MB</span></div>
+            <svg class="dropdown-item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </a>
+        <a class="dropdown-item" href="../../../About.html" role="menuitem">
+            <div class="dropdown-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg></div>
+            <div class="dropdown-item-text"><span class="dropdown-item-title">About the Project</span><span class="dropdown-item-sub">Vision &middot; Developer</span></div>
+            <svg class="dropdown-item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </a>
+        <a class="dropdown-item" href="../../../Contact.html" role="menuitem">
+            <div class="dropdown-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" /></svg></div>
+            <div class="dropdown-item-text"><span class="dropdown-item-title">Contact Us</span><span class="dropdown-item-sub">Sales &middot; Enquiry</span></div>
+            <svg class="dropdown-item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </a>
+    </div>
+
+    <!-- ═══ ENQUIRY SIDE BUTTON (ADDED) ═══ -->
+    <button class="enquiry-btn" id="enquirySideBtn">Enquiry</button>
+
+    <!-- ═══ ENQUIRY SIDE MODAL (ADDED) ═══ -->
+    <div class="enquiry-overlay-wrap" id="enquirySideOverlay" aria-hidden="true">
+        <div class="enquiry-modal-panel" role="dialog">
+            <div class="enq-header">
+                <div class="enq-title">Request Callback</div>
+                <button class="enq-close" id="enqSideClose" aria-label="Close">&#x2715;</button>
+            </div>
+            <div class="enq-body">
+                <form class="enq-form" novalidate>
+                    <input class="enq-input" name="fullName" placeholder="Full Name" required />
+                    <div class="enq-phone">
+                        <select name="dialCode"><option>+91</option><option>+971</option><option>+44</option><option>+1</option></select>
+                        <input type="tel" name="phone" placeholder="Phone Number" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required />
+                    </div>
+                    <input class="enq-input" name="city" placeholder="City" required />
+                    <input class="enq-input" type="email" name="email" placeholder="Email Address" required />
+                    <button class="enq-submit" type="submit">Request a Call Back</button>
+                    <a href="tel:+919876543210" class="enq-call">&#x1F4DE; Call Now</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ AMBIENT PARTICLES (ADDED) ═══ -->
+    <div class="ambient-particles" id="ambientParticles" aria-hidden="true"></div>
+
+  <!-- <button id="waFab" class="wa-fab" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">
+
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        d="M21.02 11.63c0 5.38-4.36 9.74-9.74 9.74-1.24 0-2.42-.23-3.51-.65l-6.78 2 1.67-6.54a9.8 9.8 0 0 1-1.12-4.55c0-5.38 4.36-9.74 9.74-9.74s9.74 4.36 9.74 9.74Z"
+        style="fill:#fff;stroke:#fff;stroke-miterlimit:10;stroke-width:.25px" />
+      <path
+        d="M15.45 13.68c-.32-.11-.54-.21-.75.11s-.86 1.07-.97 1.29c-.11.21-.32.21-.54.11-.32-.11-1.4-.43-2.58-1.5-.97-.86-1.61-1.83-1.83-2.15s0-.54.11-.75l.43-.43c.11-.11.21-.32.32-.54s.04-.43-.02-.64c-.06-.16-.64-1.72-.97-2.36-.21-.54-.43-.43-.64-.43h-.54c-.18 0-.48.06-.75.35-.27.28-1.02 1.01-1.02 2.47s0 2.79 1.18 4.19 3.22 2.9 5.16 3.65c1.93.75 2.15.54 2.58.54s1.72-.54 2.04-1.29.25-1.24.21-1.4-.11-.42-.38-.57l-1.05-.64Z"
+        style="fill:#25d366" />
+    </svg>
+  </button>
+  <div id="waLabel" class="wa-label">Chat on WhatsApp</div> -->
+  <button class="close-btn" id="closeCard">←</button>
+  <div class="main-container">
+    <div class="image-container"></div>
+  </div>
+  <!-- <div id="videoOverlay" class="video-overlay">
+    <video id="walkthroughVideo" controls preload="none">
+      <source src="./../../../Video/Lutyen Lobby.webm" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div> -->
+  <!-- Request Callback Modal -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js" integrity="..." crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/panolens@0.12.0/build/panolens.min.js"></script>
+
+  <!-- <script>const panoramaImage = new PANOLENS.ImagePanorama("../../../images/Apparments/1BHK/360/Dinning.jpg"); -->
+    <script>
+    function createArrowSVG() {
+      const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <polygon points="50,20 75,65 50,55 25,65" fill="white"/>
+  </svg>
+  `;
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+  </script>
+
+  <script>
+    // 1) Define both images
+    const LOW_SRC = "./../../../images/Thumbnail/360/Parking_01.webp";
+    const HIGH_SRC = "./../../../images/360/Parking_01.jpg";
+
+    const imageContainer = document.querySelector(".image-container");
+
+    // 2) Create panoramas
+    const panoLow = new PANOLENS.ImagePanorama(LOW_SRC);
+    const panoHigh = new PANOLENS.ImagePanorama(HIGH_SRC);
+
+    // 3) Viewer
+    const viewer = new PANOLENS.Viewer({
+      container: imageContainer,
+      autoRotate: false,
+      autoRotateSpeed: 0.1,
+      controlBar: false,
+      cameraFov: 80
+    });
+
+    // after: const viewer = new PANOLENS.Viewer({...});
+    let didInitView = false;
+
+    // Keep the same initial yaw on both (texture yaw)
+    const TEXTURE_YAW = -Math.PI / 2 + 0; // your existing value
+    panoLow.rotation.y = TEXTURE_YAW;
+    panoHigh.rotation.y = TEXTURE_YAW;
+
+    // Desired tilt DOWN amount (pitch)
+    const TILT_DOWN = Math.PI / 50; // ~16°
+
+    function setInitialViewAndLockPitch() {
+      if (didInitView) return;   // ✅ run only once (prevents flicker on swap)
+      didInitView = true;
+
+      const controls = viewer.getControl();
+
+      // Positive value here, we pass -TILT to tilt DOWN
+      const TILT = -Math.PI / 40;     // adjust how much you want to tilt
+      controls.rotateUp(-TILT);      // tilt down
+
+      // No vertical limits (free up/down)
+      if ('minPolarAngle' in controls && 'maxPolarAngle' in controls) {
+        controls.minPolarAngle = 0;          // can look straight up
+        controls.maxPolarAngle = Math.PI;    // can look straight down
+      }
+
+      // Optional: rotation only (no panning)
+      if ('enablePan' in controls) controls.enablePan = false;
+    }
+
+
+    // Apply same camera view when each pano becomes active
+    panoLow.addEventListener('enter', setInitialViewAndLockPitch);
+    panoHigh.addEventListener('enter', setInitialViewAndLockPitch);
+
+    // Start with low; add both to viewer for smooth swap
+    viewer.add(panoLow);
+    viewer.add(panoHigh);
+    viewer.setPanorama(panoLow);
+
+
+    function degToRad(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    function setFromAngles(spot, yawDeg, pitchDeg, radius = 5000) {
+      const yaw = degToRad(yawDeg);
+      const pitch = degToRad(pitchDeg);
+
+      const x = radius * Math.cos(pitch) * Math.sin(yaw);
+      const y = radius * Math.sin(pitch);
+      const z = radius * Math.cos(pitch) * Math.cos(yaw);
+
+      spot.position.set(x, y, z);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // 🔴 Hotspot 1
+       const ARROW_ICON = createArrowSVG();
+
+    const spot1 = new PANOLENS.Infospot(350, ARROW_ICON);
+    setFromAngles(spot1, 182, -10); 
+    spot1.addHoverText("Parking 02");
+    spot1.addEventListener('click', () => {
+      // keep visible for a moment
+      setTimeout(() => {
+        window.location.href = "Parking_02.html";
+      }, 800); // 0.8 sec delay
+    });
+
+    // ✅ Add all to panorama
+    [panoLow, panoHigh].forEach(pano => {
+      pano.add(spot1);
+    });
+    // Preload + swap high-res when ready
+    panoLow.addEventListener("load", () => {
+      panoHigh.addEventListener("load", () => {
+        viewer.setPanorama(panoHigh, 600); // fade swap
+        console.log("✅ Swapped to high-res panorama");
+      });
+      panoHigh.load();
+    });
+
+    panoHigh.addEventListener("error", (e) => {
+      console.warn("⚠️ Failed to load high-res:", e);
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const closeCard = document.getElementById("closeCard");
+
+      if (closeCard) {
+        closeCard.addEventListener("click", () => {
+          // 🔹 Change this path to wherever you want the button to take you
+          window.location.href = "./../../../Subpages/1BHK/Lobby_Top.html";
+          // Example: "../index.html" or "../Subpages/Tower_A.html"
+        });
+      }
+    });
+  </script>
+  <script src="./../../../JS/EnquiryForm.js"></script>
+  <script src="./../../../JS/Request-Back.js"></script>
+  <script src="./../../../JS/2a26l58eqz.js"></script>
+  <script src="./../../../JS/InspectDisable.js"></script>
+  <script src="./../../../JS/imageloader.js"></script>
+  <script src="./../../../JS/Whatsapp.js"></script>
+    <!-- JUMPBAR — macOS Dock Style -->
+    <div class="dock-wrap" id="dock">
+        <div class="dock-shelf"></div>
+        <div class="dock-items" id="dockItems">
+            <a class="dock-item" href="../../index.html">
+                <span class="dock-label">Home</span>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                <span class="dock-item-label">Home</span><span class="dock-dot"></span>
+            </a>
+            <div class="dock-divider"></div>
+            <!-- <a class="dock-item is-accent" href="Parking_01.html">
+                <span class="dock-label">Parking 01</span>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 16v-8h4a2.5 2.5 0 010 5H9"/></svg></div>
+                <span class="dock-item-label">P — 01</span><span class="dock-dot"></span>
+            </a>
+            <div class="dock-divider"></div>
+            <a class="dock-item" href="Parking_02.html">
+                <span class="dock-label">Parking 02</span>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 16v-8h4a2.5 2.5 0 010 5H9"/></svg></div>
+                <span class="dock-item-label">P — 02</span><span class="dock-dot"></span>
+            </a> -->
+            <div class="dock-divider"></div>
+            <a class="dock-item" href="../Tower_A.html">
+                <span class="dock-label">Front</span>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 012-2h8a2 2 0 012 2v18z"/><path d="M6 12H4a2 2 0 00-2 2v8h4"/><path d="M18 12h2a2 2 0 012 2v8h-4"/><path d="M10 7h4"/><path d="M10 12h4"/><path d="M10 17h4"/></svg></div>
+                <span class="dock-item-label">Front</span><span class="dock-dot"></span>
+            </a>
+            <div class="dock-divider"></div>
+            <a class="dock-item" href="../Tower_B.html">
+                <span class="dock-label">Back</span>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 012-2h8a2 2 0 012 2v18z"/><path d="M6 12H4a2 2 0 00-2 2v8h4"/><path d="M18 12h2a2 2 0 012 2v8h-4"/><path d="M10 7h4"/><path d="M10 12h4"/><path d="M10 17h4"/></svg></div>
+                <span class="dock-item-label">Back</span><span class="dock-dot"></span>
+            </a>
+        </div>
+    </div>
+    <script>
+    (function(){
+        const items=document.querySelectorAll('.dock-item'),dockItems=document.getElementById('dockItems');
+        if(!dockItems||!items.length)return;
+        const BASE=52,MAX=80,RANGE=140;
+        function magnify(e){items.forEach(item=>{const icon=item.querySelector('.dock-icon'),svg=item.querySelector('.dock-icon svg'),label=item.querySelector('.dock-label'),rect=item.getBoundingClientRect(),cx=rect.left+rect.width/2,dist=Math.abs(e.clientX-cx);if(dist<RANGE){const t=1-dist/RANGE,sz=BASE+(MAX-BASE)*t;icon.style.width=sz+'px';icon.style.height=sz+'px';icon.style.borderRadius=(16+t*4)+'px';const iSz=22+t*10;svg.style.width=iSz+'px';svg.style.height=iSz+'px';item.style.width=sz+'px';if(t>.7){icon.style.background='linear-gradient(145deg,rgba(201,168,124,.2),rgba(201,168,124,.08))';icon.style.borderColor='rgba(201,168,124,.4)';icon.style.boxShadow='0 4px 24px rgba(201,168,124,.2)';svg.style.stroke='#c9a87c';svg.style.filter='drop-shadow(0 0 6px rgba(201,168,124,.4))';label.style.opacity='1';label.style.scale='1';label.style.translate='0 0';}else{reset(icon,svg,label);}}else{icon.style.width=BASE+'px';icon.style.height=BASE+'px';icon.style.borderRadius='16px';svg.style.width='22px';svg.style.height='22px';item.style.width=BASE+'px';reset(icon,svg,label);}});}
+        function reset(icon,svg,label){icon.style.background='';icon.style.borderColor='';icon.style.boxShadow='';svg.style.stroke='';svg.style.filter='';label.style.opacity='0';label.style.scale='.9';label.style.translate='0 6px';}
+        function resetAll(){items.forEach(item=>{const icon=item.querySelector('.dock-icon'),svg=item.querySelector('.dock-icon svg'),label=item.querySelector('.dock-label');icon.style.width=icon.style.height='';icon.style.borderRadius='';svg.style.width=svg.style.height='';item.style.width='';reset(icon,svg,label);});}
+        dockItems.addEventListener('mousemove',magnify);dockItems.addEventListener('mouseleave',resetAll);
+        items.forEach(c=>{c.addEventListener('click',e=>{c.classList.add('is-bouncing');c.addEventListener('animationend',()=>c.classList.remove('is-bouncing'),{once:true});const r=document.createElement('span');r.className='dock-ripple';const icon=c.querySelector('.dock-icon'),b=icon.getBoundingClientRect(),s=Math.max(b.width,b.height);r.style.width=r.style.height=s+'px';r.style.left=(e.clientX-b.left-s/2)+'px';r.style.top=(e.clientY-b.top-s/2)+'px';icon.appendChild(r);r.addEventListener('animationend',()=>r.remove());});});
+    })();
+    </script>
+    <!-- ═══ PREMIUM UI SCRIPTS (ADDED) ═══ -->
+    <script>
+        (function(){const m=document.getElementById('menuBtn'),d=document.getElementById('dropdownMenu');if(!m||!d)return;function o(){m.classList.add('is-open');d.classList.add('is-open');m.setAttribute('aria-expanded','true');d.setAttribute('aria-hidden','false');}function c(){m.classList.remove('is-open');d.classList.remove('is-open');m.setAttribute('aria-expanded','false');d.setAttribute('aria-hidden','true');}m.addEventListener('click',e=>{e.stopPropagation();m.classList.contains('is-open')?c():o();});document.addEventListener('click',e=>{if(!d.contains(e.target)&&!m.contains(e.target))c();});document.addEventListener('keydown',e=>{if(e.key==='Escape')c();});})();
+    </script>
+    <script>
+        (function(){const b=document.getElementById('enquirySideBtn'),o=document.getElementById('enquirySideOverlay'),c=document.getElementById('enqSideClose');if(!b||!o)return;b.addEventListener('click',()=>{o.classList.add('is-open');o.setAttribute('aria-hidden','false');});if(c)c.addEventListener('click',()=>{o.classList.remove('is-open');o.setAttribute('aria-hidden','true');});o.addEventListener('click',e=>{if(e.target===o){o.classList.remove('is-open');o.setAttribute('aria-hidden','true');}});})();
+    </script>
+    <script>
+        (function(){const c=document.getElementById('ambientParticles');if(!c)return;for(let i=0;i<12;i++){const p=document.createElement('span');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(12+Math.random()*18)+'s';p.style.animationDelay=(Math.random()*15)+'s';p.style.width=p.style.height=(1.5+Math.random()*1.5)+'px';c.appendChild(p);}})();
+    </script>
+</body>
+
+</html>

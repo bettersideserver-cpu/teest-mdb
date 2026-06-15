@@ -1,0 +1,48 @@
+@media (max-width: 768px) {
+  .banner-content {
+    padding: 60px 15px;
+  }
+
+  .banner-content h2 {
+    font-size: 24px;
+  }
+
+  .banner-content p {
+    font-size: 13px;
+  }
+
+  .logo {
+    height: 34px;
+  }
+}
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .contact-form-section {
+    padding: 60px 15px;
+  }
+}
+
+  .info-card {
+    width: 100%;
+    max-width: 340px;
+  }
+
+
+  @media (max-width: 900px) {
+  .footer {
+    padding: 40px 25px;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    gap: 35px;
+  }
+
+  .footer-left p {
+    max-width: 100%;
+  }
+}
+

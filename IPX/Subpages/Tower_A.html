@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>MDB The Lutyens</title>
+    <link rel="stylesheet" href="./../wbn05d6fbh.css">
+    <link rel="stylesheet" href="./../JS/CSS/Floor-Hint.css">
+    <link rel="stylesheet" href="./../JS/Notification/UI_Hint-CSS.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════
+           DESIGN TOKENS
+           ═══════════════════════════════════════════════ */
+        :root {
+    /* ——— WHITE / EDITORIAL THEME ——— */
+    --bg-0: #F5F2EB;
+    --bg-tint: #EDE8DD;
+
+    --surface-1: rgba(255, 255, 255, 0.72);
+    --surface-2: rgba(255, 255, 255, 0.88);
+    --surface-3: rgba(255, 255, 255, 0.98);
+
+    --ink: #17181D;
+    --ink-soft: rgba(23, 24, 29, 0.62);
+    --ink-mid: rgba(23, 24, 29, 0.62);
+    --ink-dim: rgba(23, 24, 29, 0.40);
+    --ink-faint: rgba(23, 24, 29, 0.22);
+    --ink-trace: rgba(23, 24, 29, 0.09);
+
+    --line: rgba(23, 24, 29, 0.07);
+    --line-hi: rgba(23, 24, 29, 0.12);
+
+    --gold: #A8782A;
+    --gold-light: #C89A3F;
+    --gold-dark: #7A561B;
+    --gold-soft: rgba(168, 120, 42, 0.09);
+    --gold-tint: rgba(168, 120, 42, 0.14);
+
+    --glass: rgba(255, 255, 255, 0.80);
+    --glass-border: rgba(23, 24, 29, 0.08);
+    --glass-border-hover: rgba(168, 120, 42, 0.35);
+
+    --text: #17181D;
+    --text-muted: rgba(23, 24, 29, 0.55);
+
+    --shadow-sm: 0 2px 8px rgba(23, 24, 29, 0.08);
+    --shadow-md: 0 8px 24px rgba(23, 24, 29, 0.10);
+    --shadow-lg: 0 16px 48px rgba(23, 24, 29, 0.13);
+
+    --font-display: 'Cormorant Garamond', serif;
+    --font-ui: 'Outfit', sans-serif;
+    --ease-out: cubic-bezier(0.22, 0.68, 0, 1.04);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --blur: blur(28px) saturate(1.5);
+}
+
+        /* ═══════════════════════════════════════════════
+           ORIGINAL PAGE STYLES (preserved)
+           ═══════════════════════════════════════════════ */
+        body { background: var(--bg-0); color: var(--ink); }
+
+        @media (max-width: 600px) {
+            .Front { position: fixed; top: 55%; left: 50%; }
+        }
+
+        .call-btn {
+            display: block; width: 100%; text-align: center; padding: 11px 1px;
+            border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none;
+            background: #A8782A; color: #111;
+            border: 1px solid rgba(23, 24, 29, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;
+        }
+        .call-btn:hover { background: #0078be; color: var(--ink); }
+
+        /* ═══════════════════════════════════════════════
+           LEFT PANEL — Residences
+           ═══════════════════════════════════════════════ */
+        .left-panel {
+            position: fixed; top: 50%; left: 24px; transform: translateY(-50%);
+            z-index: 10000; display: flex; flex-direction: column; gap: 10px;
+            width: 248px; opacity: 0;
+            animation: slide-in-left 0.9s var(--ease-out) 0.6s forwards;
+        }
+        @keyframes slide-in-left {
+            from { opacity: 0; transform: translateY(-50%) translateX(-24px); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0); }
+        }
+        .panel-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 0 6px 12px; border-bottom: 1px solid rgba(168, 120, 42, 0.18); margin-bottom: 4px;
+        }
+        .panel-header::before {
+            content: ''; width: 22px; height: 1.5px;
+            background: linear-gradient(90deg, var(--gold), transparent); flex-shrink: 0;
+        }
+        .panel-label {
+            font-family: var(--font-ui); font-size: 10px; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase; color: var(--gold);
+            text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+        }
+        .property-type {
+            display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+            background: var(--surface-2); border: 1px solid rgba(168, 120, 42, 0.2);
+            border-radius: 16px; backdrop-filter: blur(32px) saturate(1.6);
+            -webkit-backdrop-filter: blur(32px) saturate(1.6);
+            text-decoration: none; cursor: pointer; transition: all 0.4s var(--ease-out);
+            position: relative; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(168, 120, 42, 0);
+        }
+        .property-type::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold), var(--gold-dark));
+            transform: scaleY(0); transition: transform 0.45s var(--ease-out);
+            transform-origin: center; border-radius: 0 2px 2px 0;
+        }
+        .property-type::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(168, 120, 42, 0.08) 0%, transparent 50%);
+            opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        }
+        .property-type:hover {
+            border-color: rgba(168, 120, 42, 0.4); transform: translateX(6px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(168, 120, 42, 0.1);
+            background: var(--surface-2);
+        }
+        .property-type:hover::before { transform: scaleY(1); }
+        .property-type:hover::after { opacity: 1; }
+        .pt-shimmer {
+            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 120, 42, 0.06), transparent);
+            transition: left 0.6s ease; pointer-events: none;
+        }
+        .property-type:hover .pt-shimmer { left: 100%; }
+        .pt-icon {
+            flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px;
+            background: linear-gradient(145deg, rgba(168, 120, 42, 0.16), rgba(168, 120, 42, 0.04));
+            border: 1px solid rgba(168, 120, 42, 0.2); display: grid; place-items: center;
+            transition: all 0.4s var(--ease-out); position: relative;
+        }
+        .pt-icon::after {
+            content: ''; position: absolute; inset: -3px; border-radius: 14px;
+            border: 1px solid rgba(168, 120, 42, 0); transition: all 0.4s ease;
+        }
+        .property-type:hover .pt-icon {
+            background: linear-gradient(145deg, rgba(168, 120, 42, 0.32), rgba(168, 120, 42, 0.1));
+            border-color: rgba(168, 120, 42, 0.55);
+            box-shadow: 0 0 20px rgba(168, 120, 42, 0.15), inset 0 1px 0 rgba(23, 24, 29, 0.08);
+        }
+        .property-type:hover .pt-icon::after { border-color: rgba(168, 120, 42, 0.15); }
+        .pt-icon svg {
+            width: 22px; height: 22px; stroke: var(--gold); transition: all 0.4s var(--ease-out);
+            filter: drop-shadow(0 1px 3px rgba(168, 120, 42, 0.2));
+        }
+        .property-type:hover .pt-icon svg {
+            transform: scale(1.1); filter: drop-shadow(0 2px 6px rgba(168, 120, 42, 0.3));
+        }
+        .pt-text { display: flex; flex-direction: column; gap: 4px; }
+        .pt-name {
+            font-family: var(--font-display); font-size: 18px; font-weight: 600;
+            color: var(--ink); letter-spacing: 0.3px; line-height: 1.15;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        }
+        .pt-sub {
+            font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+            letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mid);
+            transition: all 0.3s ease; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        .property-type:hover .pt-name { color: var(--ink); }
+        .property-type:hover .pt-sub { color: var(--gold-light); letter-spacing: 2.2px; }
+        .pt-arrow {
+            position: absolute; right: 16px; top: 50%;
+            transform: translateY(-50%) translateX(-6px); opacity: 0;
+            transition: all 0.35s var(--ease-out);
+        }
+        .pt-arrow svg { width: 16px; height: 16px; stroke: var(--gold); stroke-width: 2; }
+        .property-type:hover .pt-arrow { opacity: 0.7; transform: translateY(-50%) translateX(0); }
+
+        /* ═══════════════════════════════════════════════
+           TOP CONTROLS — Gallery / Walkthrough / Menu
+           ═══════════════════════════════════════════════ */
+        .top-controls {
+            position: fixed; top: 24px; right: 24px; z-index: 10000;
+            display: flex; align-items: center; gap: 8px; opacity: 0;
+            animation: slide-in-right 0.9s var(--ease-out) 0.6s forwards;
+        }
+        @keyframes slide-in-right {
+            from { opacity: 0; transform: translateX(24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .control-btn {
+            display: flex; align-items: center; gap: 8px; padding: 11px 20px;
+            background: var(--surface-2); border: 1px solid rgba(168, 120, 42, 0.18);
+            border-radius: 12px; backdrop-filter: blur(32px) saturate(1.6);
+            -webkit-backdrop-filter: blur(32px) saturate(1.6);
+            color: var(--ink-soft); font-family: var(--font-ui); font-size: 11px;
+            font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+            cursor: pointer; text-decoration: none; transition: all 0.35s var(--ease-out);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35); position: relative; overflow: hidden;
+        }
+        .control-btn::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(168, 120, 42, 0.1), transparent 60%);
+            opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+        }
+        .control-btn svg {
+            width: 16px; height: 16px; stroke: var(--gold);
+            transition: transform 0.35s var(--ease-spring); position: relative; z-index: 1;
+            filter: drop-shadow(0 1px 3px rgba(168, 120, 42, 0.2));
+        }
+        .control-btn span {
+            position: relative; z-index: 1; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+        .control-btn:hover {
+            border-color: rgba(168, 120, 42, 0.4); transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 30px rgba(168, 120, 42, 0.1);
+            color: var(--ink); background: var(--surface-2);
+        }
+        .control-btn:hover::after { opacity: 1; }
+        .control-btn:hover svg { transform: scale(1.15); }
+
+        /* Hamburger */
+        .menu-btn {
+            width: 42px; height: 42px; padding: 0; display: grid; place-items: center;
+            background: var(--surface-2); border: 1px solid rgba(168, 120, 42, 0.18);
+            border-radius: 12px; backdrop-filter: blur(32px) saturate(1.6);
+            -webkit-backdrop-filter: blur(32px) saturate(1.6);
+            cursor: pointer; transition: all 0.35s var(--ease-out);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+        }
+        .menu-btn:hover {
+            border-color: rgba(168, 120, 42, 0.4); transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 30px rgba(168, 120, 42, 0.1);
+            background: var(--surface-2);
+        }
+        .menu-btn-lines { width: 18px; height: 13px; position: relative; }
+        .menu-btn-lines span {
+            position: absolute; left: 0; width: 100%; height: 1.5px;
+            background: var(--gold); border-radius: 2px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .menu-btn-lines span:nth-child(1) { top: 0; }
+        .menu-btn-lines span:nth-child(2) { top: 50%; transform: translateY(-50%); width: 65%; }
+        .menu-btn-lines span:nth-child(3) { bottom: 0; }
+        .menu-btn.is-open .menu-btn-lines span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
+        .menu-btn.is-open .menu-btn-lines span:nth-child(2) { opacity: 0; transform: translateX(-16px); }
+        .menu-btn.is-open .menu-btn-lines span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+
+        /* ═══════════════════════════════════════════════
+           DROPDOWN MENU
+           ═══════════════════════════════════════════════ */
+        .dropdown-menu {
+            position: fixed; top: 80px; right: 24px; z-index: 10001; width: 270px;
+            background: var(--surface-3); border: 1px solid rgba(168, 120, 42, 0.18);
+            border-radius: 16px; backdrop-filter: blur(40px) saturate(1.8);
+            -webkit-backdrop-filter: blur(40px) saturate(1.8);
+            box-shadow: var(--shadow-lg), 0 0 60px rgba(168, 120, 42, 0.06);
+            padding: 6px; opacity: 0; transform: translateY(-12px) scale(0.95);
+            pointer-events: none; transition: all 0.35s var(--ease-out);
+        }
+        .dropdown-menu.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+        .dropdown-menu::before {
+            content: ''; position: absolute; top: -6px; right: 16px; width: 12px; height: 12px;
+            background: var(--surface-3);
+            border-top: 1px solid rgba(168, 120, 42, 0.18);
+            border-left: 1px solid rgba(168, 120, 42, 0.18);
+            transform: rotate(45deg);
+        }
+        .dropdown-header { padding: 14px 16px 12px; border-bottom: 1px solid rgba(168, 120, 42, 0.08); margin-bottom: 4px; }
+        .dropdown-header-label {
+            font-family: var(--font-ui); font-size: 8px; font-weight: 600;
+            letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); opacity: 0.8;
+        }
+        .dropdown-header-title {
+            font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--ink); margin-top: 3px;
+        }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+            border-radius: 10px; text-decoration: none; color: rgba(255,255,255,0.85);
+            font-family: var(--font-ui); font-size: 14px; font-weight: 400;
+            transition: all 0.3s ease; cursor: pointer; position: relative;
+        }
+        .dropdown-item:hover { background: rgba(168, 120, 42, 0.08); color: var(--ink); }
+        .dropdown-item-icon {
+            width: 34px; height: 34px; border-radius: 9px;
+            background: linear-gradient(145deg, rgba(168, 120, 42, 0.1), rgba(168, 120, 42, 0.02));
+            border: 1px solid rgba(168, 120, 42, 0.12); display: grid; place-items: center;
+            flex-shrink: 0; transition: all 0.3s ease;
+        }
+        .dropdown-item:hover .dropdown-item-icon {
+            background: linear-gradient(145deg, rgba(168, 120, 42, 0.22), rgba(168, 120, 42, 0.06));
+            border-color: rgba(168, 120, 42, 0.4);
+        }
+        .dropdown-item-icon svg { width: 15px; height: 15px; stroke: var(--gold); }
+        .dropdown-item-text { flex: 1; }
+        .dropdown-item-title { display: block; font-size: 13.5px; font-weight: 500; letter-spacing: 0.2px; }
+        .dropdown-item-sub {
+            display: block; font-size: 9.5px; font-weight: 400; color: var(--text-muted);
+            letter-spacing: 1.2px; text-transform: uppercase; margin-top: 2px;
+        }
+        .dropdown-item:hover .dropdown-item-sub { color: var(--gold-light); }
+        .dropdown-item-arrow { stroke: var(--text-muted); transition: all 0.3s ease; opacity: 0; }
+        .dropdown-item:hover .dropdown-item-arrow { stroke: var(--gold); opacity: 1; transform: translateX(3px); }
+
+        /* ═══════════════════════════════════════════════
+           ENQUIRY BUTTON
+           ═══════════════════════════════════════════════ */
+        .enquiry-btn {
+            position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 10001;
+            writing-mode: vertical-rl; text-orientation: mixed; padding: 24px 11px;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold), var(--gold-dark));
+            color: var(--ink); font-family: var(--font-ui); font-weight: 700;
+            font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+            border: none; border-radius: 10px 0 0 10px; cursor: pointer; white-space: nowrap;
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3), -2px 0 12px rgba(168, 120, 42, 0.18);
+            transition: all 0.35s var(--ease-out);
+        }
+        .enquiry-btn::before {
+            content: ''; position: absolute; inset: 0; border-radius: 10px 0 0 10px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent 40%, transparent 60%, rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+        .enquiry-btn:hover {
+            padding: 24px 14px;
+            box-shadow: -8px 0 36px rgba(0, 0, 0, 0.35), -2px 0 20px rgba(168, 120, 42, 0.25);
+        }
+        @media (max-width: 600px) { .enquiry-btn { font-size: 10px; padding: 16px 8px; letter-spacing: 1.5px; } }
+
+        /* ═══════════════════════════════════════════════
+           ENQUIRY MODAL
+           ═══════════════════════════════════════════════ */
+        .enquiry .overlay {
+            position: fixed; inset: 0; display: flex; align-items: stretch; justify-content: flex-end;
+            background: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+            z-index: 99999; pointer-events: none;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease;
+        }
+        .enquiry .overlay.is-open {
+            background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px); pointer-events: auto;
+        }
+        .enquiry .modal {
+            width: min(400px, 100vw); height: 100%;
+            background: var(--surface-3);
+            border-left: 1px solid rgba(168, 120, 42, 0.12);
+            box-shadow: -16px 0 48px rgba(0, 0, 0, 0.5);
+            display: flex; flex-direction: column; justify-content: center;
+            transform: translateX(100%);
+            transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .enquiry .overlay.is-open .modal { transform: translateX(0); }
+        .enquiry .modal-header {
+            padding: 22px 22px 14px; display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(168, 120, 42, 0.1);
+        }
+        .enquiry .modal-header::before {
+            content: ''; flex-shrink: 0; width: 3px; height: 22px;
+            background: linear-gradient(180deg, var(--gold-light), var(--gold)); border-radius: 2px;
+        }
+        .enquiry .modal-header .title {
+            flex: 1; color: var(--ink); font-weight: 600; font-size: 18px;
+            letter-spacing: 0.3px; font-family: var(--font-ui);
+        }
+        .enquiry .close {
+            flex-shrink: 0; width: 34px; height: 34px; display: grid; place-items: center;
+            border: 1px solid rgba(23, 24, 29, 0.08); border-radius: 8px;
+            background: rgba(23, 24, 29, 0.03); color: var(--ink-mid);
+            cursor: pointer; font-size: 14px; transition: all 0.25s ease;
+        }
+        .enquiry .close:hover { background: rgba(23, 24, 29, 0.08); border-color: rgba(255,255,255,0.2); }
+        .enquiry .modal-body { padding: 22px; overflow-y: auto; flex: 1; }
+        .enquiry .form { display: grid; gap: 12px; width: 100%; box-sizing: border-box; }
+        .enquiry .input, .enquiry .select, .enquiry .phone {
+            width: 100%; box-sizing: border-box; background: rgba(23, 24, 29, 0.04);
+            border: 1px solid rgba(23, 24, 29, 0.08); border-radius: 10px; padding: 13px 16px;
+            font-size: 14px; color: var(--ink); font-family: var(--font-ui);
+            transition: border-color 0.25s ease, background 0.25s ease;
+        }
+        .enquiry .input:focus, .enquiry .select:focus {
+            outline: none; border-color: rgba(168, 120, 42, 0.5); background: rgba(168, 120, 42, 0.04);
+        }
+        .enquiry .input::placeholder { color: var(--ink-faint); }
+        .enquiry .select {
+            appearance: none; cursor: pointer; color: var(--ink-mid);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M7 10l5 5 5-5" fill="none" stroke="%23C9A87C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+            background-repeat: no-repeat; background-position: right 14px center;
+        }
+        .enquiry .phone { display: flex; padding: 0; background: rgba(23, 24, 29, 0.04); }
+        .enquiry .phone select {
+            appearance: none; border: none; border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 0 12px; min-width: 72px; background: transparent; color: var(--ink-mid);
+            font-size: 14px; font-family: var(--font-ui);
+        }
+        .enquiry .phone input {
+            flex: 1; border: none; background: transparent; padding: 13px 14px;
+            font-size: 14px; color: var(--ink); font-family: var(--font-ui);
+        }
+        .enquiry .phone input::placeholder { color: var(--ink-faint); }
+        .enquiry .phone input:focus { outline: none; }
+        .enquiry .submit {
+            width: 100%; border: none; border-radius: 10px; padding: 14px;
+            font-weight: 600; font-size: 14px; letter-spacing: 0.5px;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            color: var(--ink); cursor: pointer; margin-top: 6px; transition: all 0.3s ease;
+            font-family: var(--font-ui); box-shadow: 0 4px 16px rgba(168, 120, 42, 0.25);
+        }
+        .enquiry .submit:hover {
+            background: linear-gradient(135deg, #EDD5AB, var(--gold-light));
+            box-shadow: 0 6px 24px rgba(168, 120, 42, 0.35); transform: translateY(-1px);
+        }
+        @media (max-width: 560px) { .enquiry .modal { width: 100vw; } }
+
+        /* ═══════════════════════════════════════════════
+           BOTTOM JUMPBAR
+           ═══════════════════════════════════════════════ */
+        .jumpbar {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            z-index: 11000; display: flex; align-items: center; gap: 0; padding: 5px;
+            background: var(--surface-2); border: 1px solid rgba(168, 120, 42, 0.18);
+            border-radius: 100px; backdrop-filter: blur(40px) saturate(1.8);
+            -webkit-backdrop-filter: blur(40px) saturate(1.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 80px rgba(168, 120, 42, 0.06),
+                inset 0 1px 0 rgba(23, 24, 29, 0.04);
+            opacity: 0; animation: jumpbar-rise 0.9s var(--ease-out) 0.8s forwards;
+        }
+        @keyframes jumpbar-rise {
+            from { opacity: 0; transform: translateX(-50%) translateY(24px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .jumpbar::before {
+            content: ''; position: absolute; inset: 0; border-radius: 100px; padding: 1px;
+            background: linear-gradient(135deg, rgba(168, 120, 42, 0.35), transparent 35%, transparent 65%, rgba(168, 120, 42, 0.15));
+            /* -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); */
+            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+        }
+        .jumpbar-brand {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 0 20px 0 22px; border-right: 1px solid rgba(168, 120, 42, 0.12);
+            height: 42px; user-select: none;
+        }
+        .jumpbar-brand-line {
+            font-family: var(--font-ui); font-size: 7.5px; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase; color: var(--gold);
+            line-height: 1; opacity: 0.8;
+        }
+        .jumpbar-brand-name {
+            font-family: var(--font-display); font-size: 15px; font-weight: 600;
+            color: var(--ink); letter-spacing: 0.5px; line-height: 1.1; margin-top: 2px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .jumpbar-nav { display: flex; align-items: center; gap: 2px; padding: 0 4px; }
+        .jumpbar-item {
+            display: flex; align-items: center; gap: 7px; padding: 10px 18px;
+            border-radius: 100px; text-decoration: none; color: var(--ink-mid);
+            font-family: var(--font-ui); font-size: 11.5px; font-weight: 500;
+            letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.35s var(--ease-out);
+            cursor: pointer; position: relative; white-space: nowrap;
+        }
+        .jumpbar-item svg { width: 14px; height: 14px; stroke: currentColor; transition: all 0.35s ease; }
+        .jumpbar-item:hover { color: var(--gold-light); background: rgba(168, 120, 42, 0.07); }
+        .jumpbar-item:hover svg { transform: scale(1.08); }
+        .jumpbar-item.is-active {
+            color: var(--ink);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            box-shadow: 0 4px 18px rgba(168, 120, 42, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            font-weight: 600;
+        }
+        .jumpbar-item.is-active:hover { color: var(--ink); }
+        .jumpbar-ripple {
+            position: absolute; border-radius: 50%; background: rgba(168, 120, 42, 0.25);
+            transform: scale(0); animation: jb-rip 0.6s ease-out forwards; pointer-events: none;
+        }
+        @keyframes jb-rip { to { transform: scale(4); opacity: 0; } }
+
+        /* Hide old dock */
+        .dock-wrap { display: none !important; }
+
+        /* ═══════════════════════════════════════════════
+           AMBIENT
+           ═══════════════════════════════════════════════ */
+        body::before {
+            content: ''; position: fixed; top: -150px; left: -150px; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(168, 120, 42, 0.05), transparent 65%);
+            pointer-events: none; z-index: 9999; animation: ambient-pulse 6s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: ''; position: fixed; bottom: -100px; right: -100px; width: 450px; height: 450px;
+            background: radial-gradient(circle, rgba(168, 120, 42, 0.04), transparent 65%);
+            pointer-events: none; z-index: 9999; animation: ambient-pulse 8s ease-in-out 2s infinite alternate;
+        }
+        @keyframes ambient-pulse { from { opacity: 0.6; } to { opacity: 1; } }
+        .ambient-particles { position: fixed; inset: 0; z-index: 9998; pointer-events: none; overflow: hidden; }
+        .ambient-particles .particle {
+            position: absolute; width: 2px; height: 2px; background: var(--gold);
+            border-radius: 50%; opacity: 0; animation: particle-float linear infinite;
+        }
+        @keyframes particle-float {
+            0% { opacity: 0; transform: translateY(100vh) scale(0); }
+            10% { opacity: 0.4; } 90% { opacity: 0.2; }
+            100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+        }
+        ::selection { background: rgba(168, 120, 42, 0.3); color: var(--ink); }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(168, 120, 42, 0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(168, 120, 42, 0.5); }
+
+        /* ═══════════════════════════════════════════════
+           MOBILE
+           ═══════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .left-panel {
+                top: auto; bottom: 110px; left: 12px; right: 12px;
+                transform: none; width: auto; flex-direction: row; gap: 8px;
+                animation: slide-in-bottom 0.8s var(--ease-out) 0.6s forwards;
+            }
+            @keyframes slide-in-bottom {
+                from { opacity: 0; transform: translateY(24px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .panel-header { display: none; }
+            .property-type { flex: 1; padding: 12px 14px; gap: 10px; background: var(--surface-2); }
+            .property-type:hover { transform: none; background: var(--surface-3); }
+            .pt-icon { width: 36px; height: 36px; }
+            .pt-icon svg { width: 18px; height: 18px; }
+            .pt-name { font-size: 15px; }
+            .pt-sub { font-size: 9px; letter-spacing: 1.4px; }
+            .pt-arrow { display: none; }
+            .top-controls { top: 12px; right: 12px; gap: 6px; }
+            .control-btn { padding: 10px; width: 38px; height: 38px; justify-content: center; }
+            .control-btn span { display: none; }
+            .menu-btn { width: 38px; height: 38px; }
+            .dropdown-menu { top: 60px; right: 12px; width: calc(100vw - 24px); max-width: 300px; }
+            .jumpbar { bottom: 14px; padding: 4px; }
+            .jumpbar-brand { padding: 0 12px 0 14px; height: 36px; }
+            .jumpbar-brand-line { font-size: 7px; letter-spacing: 2.5px; }
+            .jumpbar-brand-name { font-size: 13px; }
+            .jumpbar-item { padding: 8px 12px; gap: 0; }
+            .jumpbar-item span { display: none; }
+            .jumpbar-item svg { width: 16px; height: 16px; }
+        }
+        @media (max-width: 420px) {
+            .jumpbar-brand { display: none; }
+            .jumpbar-item { padding: 8px 10px; }
+        }
+    
+        /* ═══════════════════════════════════════════════
+           GALLERY LIGHTBOX (ADDED)
+           ═══════════════════════════════════════════════ */
+        .gallery-overlay {
+            position: fixed; inset: 0; z-index: 13000;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .gallery-overlay.is-open { opacity: 1; pointer-events: auto; }
+        .gallery-close {
+            position: absolute; top: 24px; right: 24px; width: 44px; height: 44px;
+            border-radius: 50%; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06); color: var(--ink); font-size: 20px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.25s ease; z-index: 2;
+        }
+        .gallery-close:hover { background: rgba(255,255,255,0.15); border-color: rgba(168, 120, 42,0.4); color: var(--gold); }
+        .gallery-counter {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            font-family: var(--font-ui); font-size: 12px; font-weight: 500;
+            letter-spacing: 2px; color: var(--ink-dim); z-index: 2;
+        }
+        .gallery-main {
+            position: relative; width: 100%; flex: 1; display: flex;
+            align-items: center; justify-content: center; padding: 80px 60px 120px;
+            box-sizing: border-box;
+        }
+        .gallery-main img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transition: opacity 0.3s ease;
+        }
+        .gallery-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 48px; height: 48px; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06);
+            color: var(--ink); font-size: 22px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.25s ease; z-index: 2;
+        }
+        .gallery-nav:hover { background: rgba(168, 120, 42,0.15); border-color: rgba(168, 120, 42,0.4); color: var(--gold); }
+        .gallery-prev { left: 20px; }
+        .gallery-next { right: 20px; }
+        .gallery-thumbs {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px; padding: 8px 12px;
+            background: rgba(0,0,0,0.6); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08); z-index: 2;
+            max-width: 90vw; overflow-x: auto; scrollbar-width: none;
+        }
+        .gallery-thumbs::-webkit-scrollbar { display: none; }
+        .gallery-thumb {
+            width: 52px; height: 36px; border-radius: 6px; overflow: hidden;
+            border: 2px solid transparent; cursor: pointer; flex-shrink: 0;
+            opacity: 0.5; transition: all 0.25s ease;
+        }
+        .gallery-thumb.is-active { border-color: var(--gold); opacity: 1; }
+        .gallery-thumb:hover { opacity: 0.85; }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        @media (max-width: 600px) {
+            .gallery-main { padding: 70px 16px 100px; }
+            .gallery-nav { width: 36px; height: 36px; font-size: 16px; }
+            .gallery-prev { left: 8px; } .gallery-next { right: 8px; }
+            .gallery-thumb { width: 40px; height: 28px; }
+        }
+
+        /* ═══════════════════════════════════════════════
+           WALKTHROUGH VIDEO MODAL (ADDED)
+           ═══════════════════════════════════════════════ */
+        .walkthrough-overlay {
+            position: fixed; inset: 0; z-index: 13000;
+            background: rgba(0, 0, 0, 0.94);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .walkthrough-overlay.is-open { opacity: 1; pointer-events: auto; }
+        .walkthrough-close {
+            position: absolute; top: 24px; right: 24px; width: 44px; height: 44px;
+            border-radius: 50%; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06); color: var(--ink); font-size: 20px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.25s ease; z-index: 2;
+        }
+        .walkthrough-close:hover { background: rgba(255,255,255,0.15); border-color: rgba(168, 120, 42,0.4); color: var(--gold); }
+        .walkthrough-video-wrap {
+            width: 90vw; max-width: 960px; aspect-ratio: 16/9;
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+            border: 1px solid rgba(168, 120, 42,0.15);
+        }
+        .walkthrough-video-wrap video {
+            width: 100%; height: 100%; object-fit: contain; background: #000;
+        }
+        @media (max-width: 600px) {
+            .walkthrough-video-wrap { width: 96vw; border-radius: 8px; }
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        sessionStorage.setItem('lastTower', 'A');
+    </script>
+
+    <div id="ui-hint" class="ui-hint" aria-live="polite" role="status">
+        <div class="ui-hint__row ui-hint__desktop">
+            <svg width="18" height="24" viewBox="0 0 18 24" aria-hidden="true">
+                <path d="M9 1c3.9 0 7 3.1 7 7v8c0 3.9-3.1 7-7 7s-7-3.1-7-7V8c0-3.9 3.1-7 7-7z" fill="white" opacity=".18" />
+                <rect x="8" y="4" width="2" height="5" rx="1" fill="white" />
+                <rect x="5" y="10" width="8" height="9" rx="4" fill="white" opacity=".4" />
+            </svg>
+            <span>Click on Floor To See Apartments</span>
+        </div>
+        <div class="ui-hint__row ui-hint__touch">
+            <svg width="18" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2a4 4 0 014 4v4h1.2a2.8 2.8 0 012.8 2.8V16c0 3.3-2.7 6-6 6H9.5A5.5 5.5 0 014 16.5V11a3 3 0 016 0v3h1V6a4 4 0 011-2.7z" fill="white" opacity=".28" />
+                <rect x="11" y="5" width="2" height="9" rx="1" fill="white" />
+            </svg>
+            <span>Click on Tower's To Select Floor</span>
+        </div>
+    </div>
+
+    <button class="close-btn" id="closeCard">&larr;</button>
+
+    <div id="floorTip" class="floortip" aria-hidden="true"></div>
+
+    <!-- ═══ LEFT PANEL — Residences ═══ -->
+    <aside class="left-panel" aria-label="Residence Types">
+        <div class="panel-header">
+            <span class="panel-label">Residences</span>
+        </div>
+         <a class="property-type" href="Skyvilla/360/SkyVilla_Tour.html" data-type="skyvilla">
+            <span class="pt-shimmer"></span>
+            <div class="pt-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21V9l9-6 9 6v12" />
+                    <path d="M9 21V13h6v8" />
+                    <path d="M3 21h18" />
+                    <circle cx="12" cy="17" r="1" fill="currentColor" />
+                    <path d="M12 3v3" />
+                    <path d="M10 5l2-2 2 2" />
+                </svg>
+            </div>
+            <div class="pt-text">
+                <span class="pt-name">Skyvilla</span>
+                <span class="pt-sub">Ultra Luxury</span>
+            </div>
+            <div class="pt-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                </svg>
+            </div>
+        </a>
+
+
+
+<a class="property-type" href="A-penthouse/penthouse.html" data-type="penthouse">
+            <span class="pt-shimmer"></span>
+            <div class="pt-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21V9l9-6 9 6v12" />
+                    <path d="M9 21V13h6v8" />
+                    <path d="M3 21h18" />
+                    <circle cx="12" cy="17" r="1" fill="currentColor" />
+                    <path d="M12 3v3" />
+                    <path d="M10 5l2-2 2 2" />
+                </svg>
+            </div>
+            <div class="pt-text">
+                <span class="pt-name">Penthouse</span>
+                <span class="pt-sub">Ultra Luxury</span>
+            </div>
+            <div class="pt-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                </svg>
+            </div>
+        </a>
+
+        <a class="property-type" href="A-Typical/Typical.html" data-type="3bhk">
+            <span class="pt-shimmer"></span>
+            <div class="pt-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="7" width="18" height="13" rx="1.5" /><path d="M3 12h18" /><path d="M12 7v13" /><path d="M7 4l5-2 5 2" />
+                </svg>
+            </div>
+            <div class="pt-text">
+                <span class="pt-name">3 BHK Residences</span>
+                <span class="pt-sub">Premium Homes</span>
+            </div>
+            <div class="pt-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg></div>
+        </a>
+        <a class="property-type" href="A-Typical/Typical.html?room=balcony" data-type="balcony">
+            <span class="pt-shimmer"></span>
+            <div class="pt-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21V9l9-6 9 6v12" />
+                    <path d="M9 21V13h6v8" />
+                    <path d="M3 21h18" />
+                    <circle cx="12" cy="17" r="1" fill="currentColor" />
+                    <path d="M12 3v3" />
+                    <path d="M10 5l2-2 2 2" />
+                </svg>
+            </div>
+            <div class="pt-text">
+                <span class="pt-name">Balcony</span>
+                <span class="pt-sub">Ultra Luxury</span>
+            </div>
+            <div class="pt-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                </svg>
+            </div>
+        </a>
+    </aside>
+
+    <!-- ═══ TOP CONTROLS ═══ -->
+    <div class="top-controls">
+        <a class="control-btn" href="#" data-open-gallery id="galleryBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" />
+            </svg>
+            <span>Gallery</span>
+        </a>
+        <a class="control-btn" href="#" data-open-walkthrough id="walkthroughBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
+            </svg>
+            <span>Walkthrough</span>
+        </a>
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+            <div class="menu-btn-lines"><span></span><span></span><span></span></div>
+        </button>
+    </div>
+
+    <!-- ═══ DROPDOWN MENU ═══ -->
+    <div class="dropdown-menu" id="dropdownMenu" role="menu" aria-hidden="true">
+        <div class="dropdown-header">
+            <div class="dropdown-header-label">Explore</div>
+            <div class="dropdown-header-title">The Lutyens</div>
+        </div>
+        <a class="dropdown-item" href="./../The Lutyens Gatefold Brochure.pdf" download role="menuitem">
+            <div class="dropdown-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><path d="M12 18v-6" /><path d="M9 15l3 3 3-3" />
+                </svg>
+            </div>
+            <div class="dropdown-item-text"><span class="dropdown-item-title">Download Brochure</span><span class="dropdown-item-sub">PDF &middot; 4.2 MB</span></div>
+            <svg class="dropdown-item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </a>
+        <a class="dropdown-item" href="About.html" role="menuitem">
+            <div class="dropdown-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+                </svg>
+            </div>
+            <div class="dropdown-item-text"><span class="dropdown-item-title">About the Project</span><span class="dropdown-item-sub">Vision &middot; Developer</span></div>
+            <svg class="dropdown-item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </a>
+        <a class="dropdown-item" href="Contact.html" role="menuitem">
+            <div class="dropdown-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                </svg>
+            </div>
+            <div class="dropdown-item-text"><span class="dropdown-item-title">Contact Us</span><span class="dropdown-item-sub">Sales &middot; Enquiry</span></div>
+            <svg class="dropdown-item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </a>
+    </div>
+
+    <!-- ═══ MAIN IMAGE + TOWERS (preserved) ═══ -->
+    <div class="Front">
+        <div class="image-wrapper">
+            <img id="mainImage" src="./../images/Thumbnail/Tower_A.webp" data-full="./../images/Tower_A.jpg"
+                alt="Tower_2" fetchpriority="high" decoding="async" width="3840" height="5830" class="blur-up" />
+            <div class="Cutout">
+               <svg viewBox="0 0 3840 5830" xmlns="http://www.w3.org/2000/svg">
+                    <path id="Floor_1" data-link="Floor-copy/floor-17.html" floorNumber="01"
+                        d="m849.94 3735.52 1861.8-115.09v-5.94h-4.33l-7.23-68.66-1835 87.4-1.8 13.33-3.89 20.44 5.36.47-2.38 8.24h7.19l-7.86 36.02z"
+                        class="st0" />
+                    <path id="Floor_2" data-link="Floor-copy/floor-17.html" floorNumber="02"
+                        d="m865.18 3633.23 1835-87.4-.42-7.1 1.49-.2-.61-5.78h-2.24l.07-1.72 1.69-.34-.07-2.33h-2.44l.27-3.95h1.59s-.1-2.67-.2-2.67h-1.8l-.1-4.46h1.83l-.14-1.96-1.83.14.14-3.1h1.72l-.54-4.78h-2.26l-.05-5.45 1.45.27.23-3.11-2.03.77-.41-10.86-1886.72 54.38-5.51 44.33 69.83.63-1.81 6.58-4.7 2.7-1.17 4.32-1.54.27-1.17 6.31-1.81 4.05-.99 6.76 5.69-.72 15.36-1.26-.36 8.02z"
+                        class="st0" />
+                    <path id="Floor_3" data-link="Floor-copy/floor-17.html" floorNumber="03"
+                        d="m808.81 3543.57 1886.72-54.38-6.01-59.6-1902.8 22.3c22.2 17.86 34.18 39.04 30.22 65.42l5.83.14s-10.14 9.87-10.03 9.87 3.18.45 3.18.45l-5.44 6.26z"
+                        class="st0" />
+                    <path id="Floor_4" data-link="Floor-copy/floor-17.html" floorNumber="04"
+                        d="m786.72 3451.89 1902.8-22.3 1.26-.54v-1.55l-2.37.17.37-5.2h1.69l-.44-5.2-2.37-.47-.54-2.43 2.17-.57-.03-1.42-1.73.17.14-4.73 1.05-.17.03-2.09h-2.03l-.03-4.05 1.9-1.12-.75-1.25h-1.25l.2-2.26 1.56-.34-.81-5.3h-1.39l-.54-4.53 1.52.2.3-1.89h-2.37l-.78-10.9-1914.5-12.25-9.49 72.96c6.95 5.23 16.55 7.9 26.43 17.06"
+                        class="st0" />
+                    <path id="Floor_5" data-link="Floor-copy/floor-17.html" floorNumber="05"
+                        d="m769.78 3361.83 1914.5 12.25-4.06-43.7-1899.41-41.9z" class="st0" />
+                    <path id="Floor_6" data-link="Floor-copy/floor-17.html"floorNumber="06"
+                        d="m780.81 3288.48 1899.41 41.9-.95-12.84 1.56-.4-.61-4.87-2.38.2.21-3.04h2.44l-.68-5.34-1.97.48.61-2.23h1.16l-.21-3.25-1.69.21-.88-8.52 1.29-.47-.21-4.53h-2.3l.95-7.23h-2.58l.34-2.03 1.9-1.69-.41-2.09-1883.62-69.86z"
+                        class="st0" />
+                    <path id="Floor_7" data-link="Floor-copy/floor-17.html" floorNumber="07"
+                        d="m792.19 3202.88 1883.62 69.86-6.03-53.19-1861.24-101.5-5.15 1.49-.68 8.11 3.93 8.78-5.96 41.09z"
+                        class="st0" />
+                    <path id="Floor_8" data-link="Floor-copy/floor-17.html" floorNumber="08"
+                        d="m808.54 3118.05 1861.24 101.5-5.19-57.39-1845.12-126.33-5.96 54.6-9.03-.9-.91 5.95 3.43 1.44 3.8 12.61z"
+                        class="st0" />
+                    <path id="Floor_9" data-link="Floor-copy/floor-17.html" floorNumber="09"
+                        d="m819.47 3035.83 1845.12 126.33-4.97-51.27-1831.29-160.03z" class="st0" />
+                    <path id="Floor_10" data-link="Floor-copy/floor-17.html" floorNumber="10"
+                        d="m828.33 2950.86 1831.29 160.03-4.47-52.58-1810.56-185.75-9.4 57.84z" class="st0" />
+                    <path id="Floor_11" data-link="Floor-copy/floor-17.html" floorNumber="11"
+                        d="m844.59 2872.56 1810.56 185.75-5.15-51.77-1794.93-211.66z" class="st0" />
+                    <path id="Floor_12" data-link="Floor-copy/floor-17.html" floorNumber="12"
+                        d="M855.07 2794.88 2650 3006.54l-4.2-49.65-1780.44-237.51-1.62 9.55-7.23-.9-1.44 6.66 2.34 2.35 1.63 19.64-5.42-1.8-1.08 7.57 3.61 22.34z"
+                        class="st0" />
+                    <path id="Floor_13" data-link="Floor-copy/floor-17.html" floorNumber="13"
+                        d="m865.36 2719.38 1780.44 237.51-4.79-51.36-1765.8-261.75z" class="st0" />
+                    <path id="Floor_14" data-link="Floor-copy/floor-17.html" floorNumber="14"
+                        d="m875.21 2643.78 1765.8 261.75-4.56-47.93L881.9 2571.87l.72 12.89-5.24.09-.63 6.76 2.53 26.04z"
+                        class="st0" />
+                    <path id="Floor_15" data-link="Floor-copy/floor-17.html" floorNumber="15"
+                        d="m881.9 2571.87 1754.55 285.73-5.56-51.36L895.9 2500.06l-6.87 58.93-8.31-.72z" class="st0" />
+                    <path id="Floor_16" data-link="Floor-copy/floor-17.html" floorNumber="16"
+                        d="m895.9 2500.06 1734.99 306.18-2.98-47.44-1727.4-330.74 1.89 30.73z" class="st0" />
+                    <path id="Floor_17" data-link="Floor-copy/floor-17.html" floorNumber="17"
+                        d="m900.51 2428.06 1727.4 330.74v-1.94l2.98-.45-4.25-61.45-34.14-8.02-28.1 11.35-1652.06-341.23-2.8 20.09 3.71-.09-1.72 20.55-7.05-.18.09 5.94.63 19.2-4.69-.36z"
+                        class="st0" />
+                    <path id="Floor_18" data-link="Floor-copy/floor-18.html" floorNumber="18"
+                        d="m912.34 2357.06 1568.44 323.96-3.9-51.64-1555.05-337.69z" class="st0" />
+                    <path id="Floor_19" data-name="Floor_19" data-link="Floor-copy/floor-19.html" floorNumber="19"
+                        d="m921.83 2291.69 1555.05 337.69-3.27-47.33L930.05 2227.4z" class="st0" />
+                    <path id="Floor_20" data-name="Floor_20" data-link="Floor-copy/floor-20.html" floorNumber="20"
+                        d="m930.05 2227.4 1543.56 354.66-7.14-106.42 81.03-45.19v-2.7l1.63.9 1.08-2.7 2.98-.27-72.41-36.62-1502.04-444.5-.27 2.79-67.03-.99s.36 3.42 0 3.42 1.9.81 1.9.81l1.08 225.08 26.65 6.67-.45 4.6-3.43-.36z"
+                        class="st0" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ ENQUIRY BUTTON ═══ -->
+    <button class="enquiry-btn" id="enquiryBtn">Enquiry</button>
+
+    <!-- ═══ ENQUIRY MODAL ═══ -->
+    <div class="enquiry">
+        <div class="overlay" id="enquiryOverlay" aria-hidden="true">
+            <div class="modal" role="dialog" aria-labelledby="enquiryTitle">
+                <div class="modal-header">
+                    <div id="enquiryTitle" class="title">Request Callback</div>
+                    <button class="close" id="closeBtn" aria-label="Close">&#x2715;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="enquiryForm" class="form" novalidate>
+                        <input class="input" name="fullName" placeholder="Full Name" required />
+                        <div class="phone">
+                            <select name="dialCode" aria-label="Country Code">
+                                <option>+91</option><option>+971</option><option>+44</option><option>+1</option>
+                            </select>
+                            <input type="tel" name="phone" placeholder="Phone Number" maxlength="10" pattern="[0-9]{10}"
+                                inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required />
+                        </div>
+                        <input class="input" name="city" placeholder="City" required />
+                        <input class="input" type="email" name="email" placeholder="Email Address"
+                            pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required />
+                        <select class="input select" name="preferredTime" required>
+                            <option value="" disabled selected>Preferred Time to Call</option>
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="evening">Evening</option>
+                        </select>
+                        <div class="g-recaptcha" data-sitekey="6Le6qZQsAAAAALlNrziohJHHqf43BSZvE1wfoxnl"></div>
+                        <button class="submit" type="submit">Request a Call Back</button>
+                        <a href="tel:+919876543210" class="call-btn">&#x1F4DE; Call Now</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ BOTTOM JUMPBAR ═══ -->
+    <nav class="jumpbar" id="jumpbar" aria-label="Primary navigation">
+        <div class="jumpbar-brand">
+            <span class="jumpbar-brand-line">MDB</span>
+            <span class="jumpbar-brand-name">The Lutyens</span>
+        </div>
+        <div class="jumpbar-nav">
+            <a class="jumpbar-item" href="../index.html" data-view="home">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span>Home</span>
+            </a>
+            <a class="jumpbar-item" href="ClubHouse/360/Cafe.html" data-view="parking">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span>Clubhose</span>
+            </a>
+
+            <a class="jumpbar-item" href="Tower_A.html" data-view="front">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span>Tower A</span>
+            </a>
+
+            <a class="jumpbar-item" href="Tower_B.html" data-view="back">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12l-9-9-9 9" />
+                    <path d="M5 10v10h14V10" />
+                    <path d="M10 20v-6h4v6" />
+                </svg>
+                <span>Tower B</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Old dock (hidden, kept for compat) -->
+    <div class="dock-wrap" id="dock" style="display:none">
+        <div class="dock-shelf"></div>
+        <div class="dock-items" id="dockItems"></div>
+    </div>
+
+    <!-- ═══ AMBIENT PARTICLES ═══ -->
+    <div class="ambient-particles" id="ambientParticles" aria-hidden="true"></div>
+
+    <!-- ═══ SCRIPTS ═══ -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const detailsBox = document.getElementById('details');
+            if (detailsBox) detailsBox.innerHTML = `<div><span>1BHK</span><span>: 48</span></div>`;
+        });
+    </script>
+
+    <script src="./../JS/CutoutPath.js"></script>
+    <script src="./../JS/Notification/UI_Hint.js"></script>
+    <script src="./../JS/BackButton.js"></script>
+    <script src="./../JS/FloorTIP.js"></script>
+    <script src="./../JS/InspectDisable.js"></script>
+    <script src="./../JS/imageloader.js"></script>
+
+    <script>
+        // Hamburger Dropdown Menu
+        (function () {
+            const menuBtn = document.getElementById('menuBtn');
+            const dropdown = document.getElementById('dropdownMenu');
+            if (!menuBtn || !dropdown) return;
+            function openMenu() {
+                menuBtn.classList.add('is-open'); dropdown.classList.add('is-open');
+                menuBtn.setAttribute('aria-expanded', 'true'); dropdown.setAttribute('aria-hidden', 'false');
+            }
+            function closeMenu() {
+                menuBtn.classList.remove('is-open'); dropdown.classList.remove('is-open');
+                menuBtn.setAttribute('aria-expanded', 'false'); dropdown.setAttribute('aria-hidden', 'true');
+            }
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuBtn.classList.contains('is-open') ? closeMenu() : openMenu(); });
+            document.addEventListener('click', (e) => { if (!dropdown.contains(e.target) && !menuBtn.contains(e.target)) closeMenu(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+        })();
+    </script>
+
+    <script>
+        // Jumpbar Click Ripple & Active State
+        (function () {
+            const items = document.querySelectorAll('.jumpbar-item');
+            items.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    items.forEach(i => i.classList.remove('is-active'));
+                    this.classList.add('is-active');
+                    const ripple = document.createElement('span');
+                    ripple.className = 'jumpbar-ripple';
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                    this.appendChild(ripple);
+                    ripple.addEventListener('animationend', () => ripple.remove());
+                });
+            });
+        })();
+    </script>
+
+    <script>
+        // Enquiry button toggle
+        (function () {
+            const btn = document.getElementById('enquiryBtn');
+            const overlay = document.getElementById('enquiryOverlay');
+            const closeBtn = document.getElementById('closeBtn');
+            if (!btn || !overlay) return;
+            btn.addEventListener('click', () => { overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden', 'false'); });
+            if (closeBtn) closeBtn.addEventListener('click', () => { overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden', 'true'); });
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden', 'true'); } });
+        })();
+    </script>
+
+    <script>
+        // Floating gold particles
+        (function () {
+            const container = document.getElementById('ambientParticles');
+            if (!container) return;
+            for (let i = 0; i < 12; i++) {
+                const p = document.createElement('span');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (12 + Math.random() * 18) + 's';
+                p.style.animationDelay = (Math.random() * 15) + 's';
+                p.style.width = p.style.height = (1.5 + Math.random() * 1.5) + 'px';
+                container.appendChild(p);
+            }
+        })();
+    </script>
+    <!-- ═══ GALLERY LIGHTBOX (ADDED) ═══ -->
+    <div class="gallery-overlay" id="galleryOverlay">
+        <button class="gallery-close" id="galleryClose">&#x2715;</button>
+        <div class="gallery-counter"><span id="galleryCurrent">1</span> / <span id="galleryTotal">6</span></div>
+        <div class="gallery-main">
+            <button class="gallery-nav gallery-prev" id="galleryPrev">&#8249;</button>
+            <img id="galleryImage" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80" alt="Gallery" />
+            <button class="gallery-nav gallery-next" id="galleryNext">&#8250;</button>
+        </div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
+    </div>
+
+    <!-- ═══ WALKTHROUGH VIDEO MODAL (ADDED) ═══ -->
+    <div class="walkthrough-overlay" id="walkthroughOverlay">
+        <button class="walkthrough-close" id="walkthroughClose">&#x2715;</button>
+        <div class="walkthrough-video-wrap">
+            <video id="walkthroughModalVideo" controls preload="none" poster="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=960&q=80">
+                <source src="../Video/MDB_The_Lutyens_Walkthrough.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- ═══ GALLERY + WALKTHROUGH SCRIPTS (ADDED) ═══ -->
+    <script>
+        // Gallery Lightbox
+        (function () {
+            const images = [
+                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
+                'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80',
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
+                'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80',
+                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80',
+                'https://images.unsplash.com/photo-1600566753376-12c8ab7a5a1e?w=1200&q=80'
+            ];
+            let idx = 0;
+            const overlay = document.getElementById('galleryOverlay');
+            const img = document.getElementById('galleryImage');
+            const counter = document.getElementById('galleryCurrent');
+            const total = document.getElementById('galleryTotal');
+            const thumbsWrap = document.getElementById('galleryThumbs');
+            if (!overlay || !img) return;
+            total.textContent = images.length;
+
+            // Build thumbs
+            images.forEach((src, i) => {
+                const t = document.createElement('div');
+                t.className = 'gallery-thumb' + (i === 0 ? ' is-active' : '');
+                t.innerHTML = '<img src="' + src.replace('w=1200', 'w=120') + '" alt="">';
+                t.addEventListener('click', () => goTo(i));
+                thumbsWrap.appendChild(t);
+            });
+
+            function goTo(i) {
+                idx = i; img.src = images[idx]; counter.textContent = idx + 1;
+                thumbsWrap.querySelectorAll('.gallery-thumb').forEach((t, j) => t.classList.toggle('is-active', j === idx));
+            }
+            function open() { overlay.classList.add('is-open'); goTo(idx); }
+            function close() { overlay.classList.remove('is-open'); }
+
+            document.getElementById('galleryPrev').addEventListener('click', () => goTo((idx - 1 + images.length) % images.length));
+            document.getElementById('galleryNext').addEventListener('click', () => goTo((idx + 1) % images.length));
+            document.getElementById('galleryClose').addEventListener('click', close);
+            overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+            // Wire all gallery buttons
+            document.querySelectorAll('[data-open-gallery]').forEach(btn => {
+                btn.addEventListener('click', e => { e.preventDefault(); open(); });
+            });
+            // Keyboard
+            document.addEventListener('keydown', e => {
+                if (!overlay.classList.contains('is-open')) return;
+                if (e.key === 'Escape') close();
+                if (e.key === 'ArrowLeft') goTo((idx - 1 + images.length) % images.length);
+                if (e.key === 'ArrowRight') goTo((idx + 1) % images.length);
+            });
+        })();
+    </script>
+    <script>
+        // Walkthrough Video Modal
+        (function () {
+            const overlay = document.getElementById('walkthroughOverlay');
+            const video = document.getElementById('walkthroughModalVideo');
+            if (!overlay || !video) return;
+            function open() { overlay.classList.add('is-open'); video.play().catch(() => {}); }
+            function close() { overlay.classList.remove('is-open'); video.pause(); video.currentTime = 0; }
+            document.getElementById('walkthroughClose').addEventListener('click', close);
+            overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+            document.querySelectorAll('[data-open-walkthrough]').forEach(btn => {
+                btn.addEventListener('click', e => { e.preventDefault(); open(); });
+            });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) close(); });
+        })();
+    </script>
+
+    <script>
+        (function(){
+            var items = document.querySelectorAll('.jumpbar-item');
+            var current = window.location.pathname.split('/').pop() || 'index.html';
+            items.forEach(function(a){
+                var page = (a.getAttribute('href') || '').split('/').pop();
+                if(page && current === page) a.classList.add('is-active');
+                else a.classList.remove('is-active');
+            });
+        })();
+    </script>
+
+     <script>console.log(
+            "Selected Floor:",
+            sessionStorage.getItem("selectedFloor")
+        );
+        console.log("selectedFloor =", selectedFloor);
+        alert("selectedFloor = " + selectedFloor);
+    </script>
+    <script>
+        function onFloorClick(floorNumber) {
+
+            sessionStorage.setItem("selectedFloor", floorNumber);
+
+            window.location.href = "A-Typical/Typical.html";
+        }
+    </script>
+
+
+   <script>function openSkyvilla() {
+
+            const floor = window.currentFloor; // selected floor
+
+            sessionStorage.setItem("selectedFloor", floor);
+
+            window.location.href =
+                "Skyvilla/360/SkyVilla_Tour.html";
+        }</script>
+    <script>
+
+        function openSkyvilla() {
+
+            const floor = sessionStorage.getItem("selectedFloor");
+
+            alert("Floor = " + floor);
+
+            window.location.href =
+                "Skyvilla/360/SkyVilla_Tour.html";
+        }
+
+    </script>
+</body>
+
+</html>
