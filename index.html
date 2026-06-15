@@ -930,7 +930,67 @@
   display: block;
 }
 
+/* ═══════════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* HIDE active project box on mobile */
+  #panel { display: none !important; }
 
+  /* hide decorative / non-essential instruments */
+  #rightInstruments, #leftRail, .crosshair { display: none !important; }
+
+  /* TOP LEFT: brand + search stacked */
+  #topLeft { top: 12px; left: 12px; right: 12px; gap: 8px; }
+  #wordmark { align-self: flex-start; }
+  .wm-crest { padding: 8px 0 8px 10px; }
+  .wm-crest svg { width: 22px; height: 22px; }
+  .wm-brand, .wm-brand-accent { font-size: 22px; }
+  .wm-inner { padding: 8px 14px 8px 12px; }
+  .wm-sub { font-size: 7.5px; letter-spacing: 0.2em; }
+
+  #searchWrap { width: 100%; }
+  #searchBox { font-size: 15px; padding: 13px 52px 13px 42px; }
+  #quickTags { gap: 5px; }
+
+  /* TOP RIGHT roads toggle smaller */
+  #topRight { top: 12px; right: 12px; }
+  #roadToggle { padding: 9px 12px; font-size: 9px; }
+
+  /* zoom controls reposition below top bar */
+  .maplibregl-ctrl-top-right { top: 110px !important; right: 12px !important; }
+
+  /* PROXIMITY filter: scrollable row above action bar */
+  #nearbyPanel {
+    top: auto; bottom: 84px; left: 12px; right: 12px;
+    transform: none; max-width: calc(100vw - 24px);
+    overflow-x: auto; justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+  }
+  #nearbyPanel::before { display: none; }
+  .filter-btn { padding: 9px 16px; font-size: 12px; }
+
+  /* BOTTOM action bar: full width, centered */
+  #coordsBar {
+    bottom: 16px; left: 12px; right: 12px;
+    justify-content: center; border-radius: var(--r-lg);
+  }
+  .act-btn .lbl { display: inline; }
+  .act-btn { padding: 11px 14px; font-size: 12px; }
+
+  /* ROUTE HUD: full width at bottom */
+  #distanceHud { bottom: 16px; left: 12px; right: 12px; min-width: 0; width: auto; }
+
+  /* attribution clear of bottom bar */
+  .maplibregl-ctrl-bottom-right { bottom: 70px !important; right: 12px !important; }
+}
+
+@media (max-width: 480px) {
+  .wm-brand, .wm-brand-accent { font-size: 20px; }
+  .act-btn .lbl { display: none; }
+  .act-btn { padding: 11px 16px; }
+  #coordsBar { gap: 6px; }
+}
 
   </style>
 </head>
