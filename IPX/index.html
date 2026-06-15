@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MDB The Lutyens</title>
     <link rel="stylesheet" href="wbn05d6fbh.css">
     <link rel="stylesheet" href="JS/TowerpinCSS.css">
@@ -605,9 +606,10 @@
            MOBILE — Left/Right Panel adjustments
            ═══════════════════════════════════════════════ */
         @media (max-width: 768px) {
+            /* ── LEFT PANEL: horizontal row, floats above jumpbar ── */
             .left-panel {
                 top: auto;
-                bottom: 110px;
+                bottom: 94px;
                 left: 12px;
                 right: 12px;
                 transform: none;
@@ -626,42 +628,67 @@
 
             .property-type {
                 flex: 1;
-                padding: 12px 14px;
+                padding: 15px 12px;
                 gap: 10px;
                 background: var(--surface-2);
+                border-radius: 18px;
+                min-height: 68px;
             }
 
             .property-type:hover { transform: none; background: var(--surface-3); }
+            .property-type:active { transform: scale(0.97); }
 
-            .pt-icon { width: 36px; height: 36px; }
-            .pt-icon svg { width: 18px; height: 18px; }
-            .pt-name { font-size: 15px; }
-            .pt-sub { font-size: 9px; letter-spacing: 1.4px; }
+            /* Bigger icons & text */
+            .pt-icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 13px;
+                flex-shrink: 0;
+            }
+            .pt-icon svg { width: 22px; height: 22px; }
+            .pt-name { font-size: 16px; }
+            .pt-sub { font-size: 9.5px; letter-spacing: 1.4px; }
             .pt-arrow { display: none; }
 
+            /* ── TOP CONTROLS: bigger, label visible ── */
             .top-controls {
-                top: 12px;
-                right: 12px;
-                gap: 6px;
+                top: 14px;
+                right: 14px;
+                gap: 8px;
             }
 
             .control-btn {
-                padding: 10px;
-                width: 38px;
-                height: 38px;
+                padding: 10px 16px;
+                width: auto;
+                height: 46px;
+                gap: 7px;
+                border-radius: 14px;
+                font-size: 10.5px;
+                letter-spacing: 1.2px;
                 justify-content: center;
             }
 
-            .control-btn span { display: none; }
+            /* Labels visible on mobile */
+            .control-btn span { display: block; }
 
-            .menu-btn { width: 38px; height: 38px; }
+            .menu-btn {
+                width: 46px;
+                height: 46px;
+                border-radius: 14px;
+            }
 
             .dropdown-menu {
-                top: 60px;
-                right: 12px;
-                width: calc(100vw - 24px);
-                max-width: 300px;
+                top: 70px;
+                right: 14px;
+                width: calc(100vw - 28px);
+                max-width: 320px;
             }
+        }
+
+        /* Very small phones — hide button labels */
+        @media (max-width: 380px) {
+            .control-btn span { display: none; }
+            .control-btn { padding: 0; width: 46px; }
         }
 
         /* ═══════════════════════════════════════════════
@@ -717,7 +744,15 @@
         }
 
         @media (max-width: 600px) {
-            .enquiry-btn { font-size: 10px; padding: 13px 28px; letter-spacing: 1.5px; right: 12px; bottom: 14px; border-radius: 50px; }
+            .enquiry-btn {
+                font-size: 11px;
+                padding: 15px 32px;
+                letter-spacing: 1.8px;
+                right: 14px;
+                bottom: 16px;
+                border-radius: 50px;
+                min-height: 50px;
+            }
         }
 
         /* CURRENT STATUS BUTTON */
@@ -769,7 +804,15 @@
         }
         .current-status-btn span { position: relative; z-index: 1; }
         @media (max-width: 600px) {
-            .current-status-btn { left: 12px; bottom: 14px; font-size: 10px; padding: 11px 14px; gap: 7px; }
+            .current-status-btn {
+                left: 14px;
+                bottom: 16px;
+                font-size: 11px;
+                padding: 13px 18px;
+                gap: 9px;
+                min-height: 50px;
+                border-radius: 14px;
+            }
         }
 
         .call-btn {
@@ -1056,32 +1099,41 @@
 
         @media (max-width: 768px) {
             .jumpbar {
-                bottom: 14px;
-                padding: 4px;
+                bottom: 16px;
+                padding: 5px;
                 gap: 0;
+                /* limit width so it doesn't overlap side buttons */
+                max-width: calc(100vw - 28px);
             }
 
             .jumpbar-brand {
-                padding: 0 12px 0 14px;
-                height: 36px;
+                padding: 0 14px 0 16px;
+                height: 44px;
             }
 
-            .jumpbar-brand-line { font-size: 7px; letter-spacing: 2.5px; }
-            .jumpbar-brand-name { font-size: 13px; }
+            .jumpbar-brand-line { font-size: 7.5px; letter-spacing: 2.5px; }
+            .jumpbar-brand-name { font-size: 14px; }
 
+            /* Show icon + label, bigger tap target */
             .jumpbar-item {
-                padding: 8px 12px;
-                gap: 0;
+                padding: 10px 14px;
+                gap: 6px;
+                min-height: 44px;
             }
 
-            .jumpbar-item span { display: none; }
+            .jumpbar-item span {
+                display: block;
+                font-size: 10px;
+                letter-spacing: 1.2px;
+            }
 
-            .jumpbar-item svg { width: 16px; height: 16px; }
+            .jumpbar-item svg { width: 18px; height: 18px; }
         }
 
         @media (max-width: 420px) {
             .jumpbar-brand { display: none; }
-            .jumpbar-item { padding: 8px 10px; }
+            .jumpbar-item { padding: 10px 12px; gap: 5px; }
+            .jumpbar-item span { font-size: 9.5px; letter-spacing: 1px; }
         }
 
         /* Hide old dock if still present */
@@ -1592,20 +1644,23 @@
                 z-index: 9999;
             }
 
-            /* ── TOP CONTROLS: icon-only row, top-right ── */
+            /* ── TOP CONTROLS: icon + label, top-right ── */
             .top-controls {
-                top: 10px;
-                right: 10px;
-                gap: 6px;
+                top: 14px;
+                right: 14px;
+                gap: 8px;
             }
             .control-btn {
-                width: 38px;
-                height: 38px;
-                padding: 0;
+                height: 46px;
+                padding: 0 16px;
+                gap: 7px;
                 justify-content: center;
+                font-size: 10.5px;
+                letter-spacing: 1.2px;
+                border-radius: 14px;
             }
-            .control-btn span { display: none; }
-            .menu-btn { width: 38px; height: 38px; border-radius: 10px; }
+            .control-btn span { display: block; }
+            .menu-btn { width: 46px; height: 46px; border-radius: 14px; }
 
             /* ── DROPDOWN MENU: stretch to screen ── */
             .dropdown-menu {
@@ -1618,14 +1673,14 @@
 
             /* ── JUMPBAR: pinned bottom, full-width pill ── */
             .jumpbar {
-                bottom: 14px;
+                bottom: 16px;
                 left: 12px;
                 right: 12px;
                 transform: none;
                 width: calc(100% - 24px);
                 justify-content: space-around;
-                padding: 10px 6px;
-                border-radius: 22px;
+                padding: 6px 6px;
+                border-radius: 26px;
                 gap: 0;
             }
 
@@ -1638,45 +1693,48 @@
                 flex-direction: column !important;
                 align-items: center;
                 justify-content: center;
-                gap: 5px;
-                padding: 10px 6px;
-                border-radius: 16px;
-                font-size: 10px !important;
+                gap: 6px;
+                padding: 12px 8px;
+                border-radius: 18px;
+                font-size: 11px !important;
                 letter-spacing: 1px;
                 white-space: nowrap;
+                min-height: 56px;
             }
-            .jumpbar-item span { display: flex !important; font-size: 10px !important; }
-            .jumpbar-item svg { width: 20px !important; height: 20px !important; }
+            .jumpbar-item span { display: flex !important; font-size: 11px !important; }
+            .jumpbar-item svg { width: 22px !important; height: 22px !important; }
 
             /* ── BOTTOM ACTION ROW: enquiry + current-status side by side ── */
             .enquiry-btn,
             #enquiryBtn {
-                right: 12px !important;
-                bottom: 90px !important;
-                font-size: 10px !important;
-                padding: 11px 22px !important;
-                letter-spacing: 1.5px !important;
+                right: 14px !important;
+                bottom: 96px !important;
+                font-size: 11.5px !important;
+                padding: 14px 28px !important;
+                letter-spacing: 1.8px !important;
                 border-radius: 50px !important;
+                min-height: 50px !important;
             }
 
             .current-status-btn {
-                left: 12px;
-                bottom: 90px;
-                font-size: 10px;
-                padding: 11px 15px;
-                gap: 7px;
+                left: 14px;
+                bottom: 96px;
+                font-size: 11px;
+                padding: 14px 18px;
+                gap: 9px;
                 border-radius: 50px;
+                min-height: 50px;
             }
             /* Show "Current Status" label */
             .current-status-btn span:last-child {
                 display: inline !important;
-                font-size: 10px;
+                font-size: 11px;
                 letter-spacing: 1px;
             }
 
             /* ── DAY SLIDER: above action row ── */
             .day-slider-wrap {
-                bottom: 148px;
+                bottom: 158px;
                 width: calc(100vw - 24px);
                 left: 12px;
                 right: 12px;
@@ -1685,16 +1743,19 @@
                 padding: 8px 18px;
             }
 
-            /* ── MUSIC TOGGLE: top-right, beside top controls ── */
+            /* ── MUSIC TOGGLE: sits left of top controls ── */
             #music-toggle {
                 bottom: auto !important;
-                top: 10px !important;
-                left: auto !important;
-                right: 58px !important;
-                padding: 9px 14px !important;
+                top: 14px !important;
+                left: 14px !important;
+                right: auto !important;
+                padding: 12px 18px !important;
                 border-radius: 50px !important;
+                font-size: 11px !important;
+                min-height: 46px !important;
+                gap: 8px !important;
             }
-            #music-toggle span { display: none !important; }
+            #music-toggle span { display: inline !important; }
 
             /* ── GALLERY: bigger touch targets ── */
             .gallery-nav { width: 40px; height: 40px; font-size: 18px; }
@@ -1729,53 +1790,63 @@
         @media (max-width: 480px) {
             /* Jumpbar: labels stay visible on small phones too */
             .jumpbar {
-                padding: 8px 4px;
+                padding: 6px 4px;
                 bottom: 12px;
             }
             .jumpbar-item {
-                font-size: 9px !important;
-                padding: 8px 4px;
-                gap: 4px;
+                font-size: 10px !important;
+                padding: 10px 4px;
+                gap: 5px;
                 letter-spacing: 0.8px;
+                min-height: 52px;
             }
-            .jumpbar-item span { display: flex !important; font-size: 9px !important; }
-            .jumpbar-item svg { width: 18px !important; height: 18px !important; }
+            .jumpbar-item span { display: flex !important; font-size: 10px !important; }
+            .jumpbar-item svg { width: 20px !important; height: 20px !important; }
 
-            .top-controls { gap: 4px; top: 8px; right: 8px; }
-            .control-btn, .menu-btn { width: 36px; height: 36px; }
+            /* Keep top controls reasonably sized */
+            .top-controls { gap: 6px; top: 12px; right: 12px; }
+            .control-btn {
+                height: 44px;
+                padding: 0 14px;
+            }
+            .control-btn span { display: block; font-size: 10px; }
+            .menu-btn { width: 44px; height: 44px; }
             .menu-btn-lines { width: 16px; height: 11px; }
 
-            .rera-blueprint { transform: scale(0.65); transform-origin: top left; }
+            .rera-blueprint { transform: scale(0.68); transform-origin: top left; }
 
-            /* Music toggle top-right beside controls */
+            /* Music toggle stays left */
             #music-toggle {
                 bottom: auto !important;
-                top: 8px !important;
-                left: auto !important;
-                right: 54px !important;
-                padding: 8px 12px !important;
+                top: 12px !important;
+                left: 12px !important;
+                right: auto !important;
+                padding: 11px 16px !important;
+                min-height: 44px !important;
             }
+            #music-toggle span { display: inline !important; font-size: 10.5px !important; }
 
-            /* Tighten action row slightly */
+            /* Action row */
             .enquiry-btn,
             #enquiryBtn {
-                bottom: 86px !important;
-                font-size: 9.5px !important;
-                padding: 10px 18px !important;
+                bottom: 90px !important;
+                font-size: 11px !important;
+                padding: 13px 24px !important;
             }
             .current-status-btn {
-                bottom: 86px;
-                padding: 10px 13px;
+                bottom: 90px;
+                padding: 13px 15px;
+                font-size: 10.5px;
             }
             .current-status-btn span:last-child {
                 display: inline !important;
-                font-size: 9.5px;
+                font-size: 10.5px;
                 letter-spacing: 0.8px;
             }
 
             /* Slider above action row */
             .day-slider-wrap {
-                bottom: 142px;
+                bottom: 148px;
             }
         }
 
@@ -1783,15 +1854,17 @@
            VERY SMALL (≤ 360px)
            –––––––––––––––––––––––––––––––––––––––––––– */
         @media (max-width: 360px) {
-            .jumpbar { padding: 7px 3px; }
-            .jumpbar-item { padding: 7px 3px; font-size: 8px !important; gap: 3px; }
-            .jumpbar-item span { display: flex !important; font-size: 8px !important; }
-            .jumpbar-item svg { width: 16px !important; height: 16px !important; }
-            .control-btn, .menu-btn { width: 32px; height: 32px; }
-            .enquiry-btn, #enquiryBtn { font-size: 9px !important; padding: 9px 14px !important; bottom: 84px !important; }
-            .current-status-btn { padding: 9px 10px; bottom: 84px; }
-            .current-status-btn span:last-child { display: inline !important; font-size: 9px; }
-            .day-slider-wrap { bottom: 138px; }
+            .jumpbar { padding: 5px 3px; }
+            .jumpbar-item { padding: 9px 3px; font-size: 9px !important; gap: 4px; min-height: 48px; }
+            .jumpbar-item span { display: flex !important; font-size: 9px !important; }
+            .jumpbar-item svg { width: 18px !important; height: 18px !important; }
+            .control-btn { height: 42px; padding: 0 12px; }
+            .control-btn span { display: block; font-size: 9.5px; }
+            .menu-btn { width: 42px; height: 42px; }
+            .enquiry-btn, #enquiryBtn { font-size: 10px !important; padding: 12px 18px !important; bottom: 88px !important; }
+            .current-status-btn { padding: 12px 12px; bottom: 88px; font-size: 10px; }
+            .current-status-btn span:last-child { display: inline !important; font-size: 10px; }
+            .day-slider-wrap { bottom: 145px; }
         }
 
         /* ──────────────────────────────────────────────
@@ -1799,10 +1872,10 @@
            –––––––––––––––––––––––––––––––––––––––––––– */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
             @media (max-width: 768px) {
-                .jumpbar { bottom: calc(14px + env(safe-area-inset-bottom)); }
-                .enquiry-btn, #enquiryBtn { bottom: calc(90px + env(safe-area-inset-bottom)) !important; }
-                .current-status-btn { bottom: calc(90px + env(safe-area-inset-bottom)); }
-                .day-slider-wrap { bottom: calc(148px + env(safe-area-inset-bottom)); }
+                .jumpbar { bottom: calc(16px + env(safe-area-inset-bottom)); }
+                .enquiry-btn, #enquiryBtn { bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
+                .current-status-btn { bottom: calc(96px + env(safe-area-inset-bottom)); }
+                .day-slider-wrap { bottom: calc(158px + env(safe-area-inset-bottom)); }
             }
         }
     </style>
