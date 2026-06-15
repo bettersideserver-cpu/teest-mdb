@@ -1638,7 +1638,7 @@
 
             /* ── JUMPBAR: pinned bottom, full-width pill ── */
             .jumpbar {
-                bottom: 16px;
+                bottom: 14px;
                 left: 12px;
                 right: 12px;
                 transform: none !important;
@@ -1646,8 +1646,8 @@
                 max-width: calc(100% - 24px);
                 box-sizing: border-box;
                 justify-content: space-around;
-                padding: 6px 6px;
-                border-radius: 26px;
+                padding: 4px 4px;
+                border-radius: 22px;
                 gap: 0;
                 animation: jumpbar-rise-mobile 0.9s var(--ease-out) 0.8s forwards;
             }
@@ -1666,54 +1666,54 @@
                 flex-direction: column !important;
                 align-items: center;
                 justify-content: center;
-                gap: 6px;
-                padding: 12px 8px;
-                border-radius: 18px;
-                font-size: 11px !important;
-                letter-spacing: 1px;
+                gap: 4px;
+                padding: 8px 6px;
+                border-radius: 16px;
+                font-size: 10px !important;
+                letter-spacing: 0.8px;
                 white-space: nowrap;
-                min-height: 56px;
+                min-height: 46px;
             }
-            .jumpbar-item span { display: flex !important; font-size: 11px !important; }
-            .jumpbar-item svg { width: 22px !important; height: 22px !important; }
+            .jumpbar-item span { display: flex !important; font-size: 10px !important; }
+            .jumpbar-item svg { width: 19px !important; height: 19px !important; }
 
             /* ── BOTTOM ACTION ROW: enquiry + current-status side by side ── */
             .enquiry-btn,
             #enquiryBtn {
                 right: 14px !important;
-                bottom: 96px !important;
-                font-size: 11.5px !important;
-                padding: 14px 28px !important;
-                letter-spacing: 1.8px !important;
+                bottom: 84px !important;
+                font-size: 11px !important;
+                padding: 12px 24px !important;
+                letter-spacing: 1.6px !important;
                 border-radius: 50px !important;
-                min-height: 50px !important;
+                min-height: 46px !important;
             }
 
             .current-status-btn {
                 left: 14px;
-                bottom: 96px;
-                font-size: 11px;
-                padding: 14px 18px;
-                gap: 9px;
+                bottom: 84px;
+                font-size: 10.5px;
+                padding: 12px 16px;
+                gap: 8px;
                 border-radius: 50px;
-                min-height: 50px;
+                min-height: 46px;
             }
             /* Show "Current Status" label */
             .current-status-btn span:last-child {
                 display: inline !important;
-                font-size: 11px;
-                letter-spacing: 1px;
+                font-size: 10.5px;
+                letter-spacing: 0.8px;
             }
 
-            /* ── DAY SLIDER: above left panel cards ── */
+            /* ── DAY SLIDER: compact, centered, above action row ── */
             .day-slider-wrap {
-                bottom: 240px;
-                width: calc(100vw - 24px);
-                left: 12px;
-                right: 12px;
-                transform: none;
+                bottom: 142px;
+                width: min(280px, calc(100vw - 80px));
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
                 border-radius: 50px;
-                padding: 8px 18px;
+                padding: 5px 14px;
             }
 
             /* ── MUSIC TOGGLE: sits left of top controls ── */
@@ -1763,18 +1763,18 @@
         @media (max-width: 480px) {
             /* Jumpbar: labels stay visible on small phones too */
             .jumpbar {
-                padding: 6px 4px;
+                padding: 4px 4px;
                 bottom: 12px;
             }
             .jumpbar-item {
-                font-size: 10px !important;
-                padding: 10px 4px;
-                gap: 5px;
-                letter-spacing: 0.8px;
-                min-height: 52px;
+                font-size: 9.5px !important;
+                padding: 8px 4px;
+                gap: 4px;
+                letter-spacing: 0.7px;
+                min-height: 44px;
             }
-            .jumpbar-item span { display: flex !important; font-size: 10px !important; }
-            .jumpbar-item svg { width: 20px !important; height: 20px !important; }
+            .jumpbar-item span { display: flex !important; font-size: 9.5px !important; }
+            .jumpbar-item svg { width: 18px !important; height: 18px !important; }
 
             /* Keep top controls reasonably sized */
             .top-controls { gap: 6px; top: 12px; right: 12px; }
@@ -1802,24 +1802,25 @@
             /* Action row */
             .enquiry-btn,
             #enquiryBtn {
-                bottom: 90px !important;
-                font-size: 11px !important;
-                padding: 13px 24px !important;
+                bottom: 80px !important;
+                font-size: 10.5px !important;
+                padding: 11px 22px !important;
             }
             .current-status-btn {
-                bottom: 90px;
-                padding: 13px 15px;
-                font-size: 10.5px;
+                bottom: 80px;
+                padding: 11px 14px;
+                font-size: 10px;
             }
             .current-status-btn span:last-child {
                 display: inline !important;
-                font-size: 10.5px;
-                letter-spacing: 0.8px;
+                font-size: 10px;
+                letter-spacing: 0.7px;
             }
 
-            /* Slider above left panel cards */
+            /* Slider: compact, centered, above action row */
             .day-slider-wrap {
-                bottom: 235px;
+                bottom: 134px;
+                width: min(260px, calc(100vw - 80px));
             }
         }
 
@@ -1834,10 +1835,10 @@
             .control-btn { height: 42px; padding: 0 12px; }
             .control-btn span { display: block; font-size: 9.5px; }
             .menu-btn { width: 42px; height: 42px; }
-            .enquiry-btn, #enquiryBtn { font-size: 10px !important; padding: 12px 18px !important; bottom: 88px !important; }
-            .current-status-btn { padding: 12px 12px; bottom: 88px; font-size: 10px; }
-            .current-status-btn span:last-child { display: inline !important; font-size: 10px; }
-            .day-slider-wrap { bottom: 230px; }
+            .enquiry-btn, #enquiryBtn { font-size: 9.5px !important; padding: 10px 16px !important; bottom: 76px !important; }
+            .current-status-btn { padding: 10px 12px; bottom: 76px; font-size: 9.5px; }
+            .current-status-btn span:last-child { display: inline !important; font-size: 9.5px; }
+            .day-slider-wrap { bottom: 128px; width: min(240px, calc(100vw - 72px)); }
         }
 
         /* ──────────────────────────────────────────────
@@ -1845,10 +1846,10 @@
            –––––––––––––––––––––––––––––––––––––––––––– */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
             @media (max-width: 768px) {
-                .jumpbar { bottom: calc(16px + env(safe-area-inset-bottom)); }
-                .enquiry-btn, #enquiryBtn { bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
-                .current-status-btn { bottom: calc(96px + env(safe-area-inset-bottom)); }
-                .day-slider-wrap { bottom: calc(240px + env(safe-area-inset-bottom)); }
+                .jumpbar { bottom: calc(14px + env(safe-area-inset-bottom)); }
+                .enquiry-btn, #enquiryBtn { bottom: calc(84px + env(safe-area-inset-bottom)) !important; }
+                .current-status-btn { bottom: calc(84px + env(safe-area-inset-bottom)); }
+                .day-slider-wrap { bottom: calc(142px + env(safe-area-inset-bottom)); }
             }
         }
     </style>
