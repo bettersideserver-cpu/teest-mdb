@@ -960,23 +960,20 @@
   /* zoom controls reposition below top bar */
   .maplibregl-ctrl-top-right { top: 110px !important; right: 12px !important; }
 
-  /* PROXIMITY filter: scrollable row above action bar */
+  /* PROXIMITY filter: hide on mobile by default */
   #nearbyPanel {
-    top: auto; bottom: 84px; left: 12px; right: 12px;
-    transform: none; max-width: calc(100vw - 24px);
-    overflow-x: auto; justify-content: flex-start;
-    -webkit-overflow-scrolling: touch;
+    display: none !important;
   }
-  #nearbyPanel::before { display: none; }
-  .filter-btn { padding: 9px 16px; font-size: 12px; }
 
-  /* BOTTOM action bar: full width, centered */
+  /* BOTTOM action bar: full width, compact */
   #coordsBar {
     bottom: 16px; left: 12px; right: 12px;
-    justify-content: center; border-radius: var(--r-lg);
+    justify-content: space-evenly; border-radius: var(--r-lg);
+    padding: 4px;
   }
   .act-btn .lbl { display: inline; }
-  .act-btn { padding: 11px 14px; font-size: 12px; }
+  .act-btn { padding: 10px 12px; font-size: 12px; gap: 6px; }
+  .act-btn svg { width: 16px; height: 16px; }
 
   /* ROUTE HUD: full width at bottom */
   #distanceHud { bottom: 16px; left: 12px; right: 12px; min-width: 0; width: auto; }
@@ -987,9 +984,9 @@
 
 @media (max-width: 480px) {
   .wm-brand, .wm-brand-accent { font-size: 20px; }
-  .act-btn .lbl { display: none; }
-  .act-btn { padding: 11px 16px; }
-  #coordsBar { gap: 6px; }
+  .act-btn .lbl { display: inline; }
+  .act-btn { padding: 9px 10px; font-size: 11px; }
+  #coordsBar { gap: 4px; }
 }
 
   </style>
