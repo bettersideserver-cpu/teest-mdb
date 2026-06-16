@@ -99,60 +99,74 @@
         @media (max-width: 600px) {
             body {
                 overflow: hidden;
+                background: #070707;
             }
 
+            /* 
+             * Rotate the whole scene 90deg so portrait image becomes landscape.
+             * We swap vw/vh: rotated element width = vh, height = vw
+             * Then translate to re-center it in the viewport.
+             */
             .lobby-top {
-                overflow: hidden;
+                overflow: visible;
                 position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
+                top: 0; left: 0;
+                /* rotated: width becomes screen height, height becomes screen width */
+                width: 100vh;
+                height: 100vw;
+                /* center it after rotation */
+                transform-origin: top left;
+                transform: rotate(90deg) translateY(-100%);
                 cursor: grab;
+                background-color: #070707;
             }
 
             .lobby-top.dragging {
                 cursor: grabbing;
             }
 
-            /* image: full height, auto width (wider than screen) — panned via JS */
             .content-wrapper {
                 position: absolute;
                 top: 0;
                 left: 0;
-                height: 100vh;
-                width: auto;
+                /* fill the rotated lobby-top */
+                width: 100%;
+                height: 100%;
                 will-change: transform;
             }
 
             .content-wrapper img {
                 display: block;
-                height: 100vh;
-                width: auto;
-                max-width: none;
-                object-fit: fill;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
                 pointer-events: none;
                 user-select: none;
             }
 
-            /* Cutout: position fixed, full viewport — SVG pans via its own left offset */
+            /* SVG overlays exactly on the image inside the rotated container */
             .Cutout {
-                position: fixed !important;
+                position: absolute !important;
                 top: 0 !important;
                 left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
+                width: 100% !important;
+                height: 100% !important;
                 transform: none !important;
                 overflow: visible !important;
                 display: block !important;
                 pointer-events: none;
             }
 
-            /* SVG: sized to match actual image render size, shifted by pan offset */
             .Cutout svg {
                 position: absolute;
                 top: 50%;
-                left: 0;
-                transform: translateY(-50%);
-                min-width: unset;
-                min-height: unset;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: auto;
+                height: auto;
+                min-width: 100%;
+                min-height: 100%;
             }
 
             /* hide tooltip on mobile */
@@ -163,6 +177,22 @@
             /* hide unwanted scroll artifacts */
             .floor-pill, #floorPill {
                 display: none !important;
+            }
+
+            /* back button — re-position for rotated view */
+            .close-btn, .close-btn2, #closeBtn2, #closeCard {
+                /* after rotation, "top-left" of screen is physically bottom-left */
+                top: 16px !important;
+                left: 16px !important;
+            }
+
+            /* dock stays at bottom of physical screen */
+            #dock, .dock-wrap {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 99999 !important;
             }
         }
 
@@ -666,124 +696,26 @@
     });
     </script>
 
-    <!-- ============================================================
-         MOBILE: pan image + SVG together
-         Strategy:
-           - Image is full height, auto width (wider than screen) — panned via translateX on wrapper
-           - SVG is position:fixed over full viewport
-           - SVG is sized to match image render size
-           - SVG left offset tracks the pan so it stays pixel-perfect over the image
-           - Desktop rendering: SVG viewBox 3840x5758 scaled so width = vw, centered vertically
-           - We replicate the same scale on mobile
-    ============================================================ -->
+    <!-- MOBILE: rotate entire scene 90deg, image+SVG together -->
     <script>
     (function () {
         if (window.innerWidth > 600) return;
 
-        const lobby   = document.getElementById('lobbyTop');
-        const wrapper = document.getElementById('contentWrapper');
-        const img     = document.getElementById('mainImage');
-        const svg     = document.querySelector('.Cutout svg');
-        if (!lobby || !wrapper || !img || !svg) return;
+        // The lobby-top is rotated 90deg via CSS.
+        // Its dimensions are set to vh x vw so after rotation it fills the screen.
+        // image uses object-fit:cover inside it — SVG overlays exactly.
+        // No JS panning needed — the floor plan fits in one screen after rotation.
 
-        const SVG_VB_W = 3840;
-        const SVG_VB_H = 5758;
-
-        let translateX = 0;
-        let isDragging = false;
-        let startX     = 0;
-        let imgW       = 0; // rendered image width
-
-        function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
-
-        function setup() {
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-
-            // Image natural ratio
-            const natW = img.naturalWidth  || 4096;
-            const natH = img.naturalHeight || 4096;
-            const imgRatio = natW / natH;
-
-            // Rendered: height = vh, width = vh * ratio
-            imgW = vh * imgRatio;
-
-            // Force image & wrapper to exact size
-            img.style.width     = imgW + 'px';
-            img.style.height    = vh + 'px';
-            wrapper.style.width  = imgW + 'px';
-            wrapper.style.height = vh + 'px';
-
-            // SVG sizing: replicate desktop logic
-            // Desktop: SVG width = vw (min-width:100%), height = vw*(SVG_VB_H/SVG_VB_W)
-            // We scale by the same ratio: svgW = imgW, svgH = imgW*(SVG_VB_H/SVG_VB_W)
-            const svgW = imgW;
-            const svgH = imgW * (SVG_VB_H / SVG_VB_W);
-
-            svg.style.width  = svgW + 'px';
-            svg.style.height = svgH + 'px';
-            // Vertical: centered (translateY(-50%) + top:50% already set in CSS)
-            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-
-            // Center pan to start
-            translateX = -((imgW - vw) / 2);
-            applyPan();
+        // Re-apply correct dimensions on resize (e.g. orientation change)
+        function fixSize() {
+            const lobby = document.getElementById('lobbyTop');
+            if (!lobby) return;
+            lobby.style.width  = window.innerHeight + 'px';
+            lobby.style.height = window.innerWidth  + 'px';
         }
 
-        function applyPan() {
-            const minX = -(imgW - window.innerWidth);
-            translateX = clamp(translateX, minX, 0);
-
-            // Pan the image
-            wrapper.style.transform = `translateX(${translateX}px)`;
-
-            // Pan the SVG left to match (SVG is position:fixed, so we shift its left)
-            svg.style.left = translateX + 'px';
-        }
-
-        // Touch
-        lobby.addEventListener('touchstart', e => {
-            if (e.touches.length !== 1) return;
-            isDragging = true;
-            startX = e.touches[0].clientX - translateX;
-            lobby.classList.add('dragging');
-        }, { passive: true });
-
-        lobby.addEventListener('touchmove', e => {
-            if (!isDragging || e.touches.length !== 1) return;
-            translateX = e.touches[0].clientX - startX;
-            applyPan();
-        }, { passive: true });
-
-        lobby.addEventListener('touchend', () => {
-            isDragging = false;
-            lobby.classList.remove('dragging');
-        });
-
-        // Mouse fallback
-        lobby.addEventListener('mousedown', e => {
-            isDragging = true;
-            startX = e.clientX - translateX;
-            lobby.classList.add('dragging');
-        });
-        window.addEventListener('mousemove', e => {
-            if (!isDragging) return;
-            translateX = e.clientX - startX;
-            applyPan();
-        });
-        window.addEventListener('mouseup', () => {
-            isDragging = false;
-            lobby.classList.remove('dragging');
-        });
-
-        window.addEventListener('resize', setup);
-
-        // Run after image loaded so naturalWidth is available
-        if (img.complete && img.naturalWidth > 0) {
-            setup();
-        } else {
-            img.addEventListener('load', setup);
-        }
+        fixSize();
+        window.addEventListener('resize', fixSize);
     })();
     </script>
 
