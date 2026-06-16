@@ -143,16 +143,15 @@
                 height: 100%;
                 /* override fixed positioning */
                 transform: none !important;
-                pointer-events: none; /* let touch events pass for panning; paths still get pointer-events:auto */
+                pointer-events: none;
             }
 
+            /* SVG size is set by JS to exactly match rendered image pixel size */
             .Cutout svg {
                 position: absolute;
                 top: 0;
                 left: 0;
                 transform: none;
-                width: 100%;
-                height: 100%;
                 min-width: unset;
                 min-height: unset;
             }
@@ -669,9 +668,7 @@
     </script>
 
     <!-- ============================================================
-         MOBILE: drag-to-pan with SVG stuck to image
-         On mobile the .Cutout is position:absolute inside .content-wrapper
-         so when wrapper pans, SVG pans with it. We only need to move wrapper.
+         MOBILE: drag-to-pan + SVG perfectly aligned to image
     ============================================================ -->
     <script>
     (function () {
@@ -680,11 +677,41 @@
         const lobby   = document.getElementById('lobbyTop');
         const wrapper = document.getElementById('contentWrapper');
         const img     = document.getElementById('mainImage');
-        if (!lobby || !wrapper || !img) return;
+        const svg     = document.querySelector('.Cutout svg');
+        const cutout  = document.querySelector('.Cutout');
+        if (!lobby || !wrapper || !img || !svg || !cutout) return;
 
         let isDragging = false;
         let startX     = 0;
         let translateX = 0;
+
+        // SVG natural viewBox dimensions
+        const SVG_W = 3840;
+        const SVG_H = 5758;
+        const SVG_RATIO = SVG_W / SVG_H; // portrait ~0.667
+
+        function syncSvgToImage() {
+            // Rendered image size: height = 100vh, width = auto (keeps aspect ratio)
+            const renderedH = window.innerHeight;
+            const renderedW = img.offsetWidth; // actual px width after CSS
+
+            // Set wrapper width to match image
+            wrapper.style.width  = renderedW + 'px';
+            wrapper.style.height = renderedH + 'px';
+
+            // Cutout fills wrapper exactly
+            cutout.style.width  = renderedW + 'px';
+            cutout.style.height = renderedH + 'px';
+
+            // The image covers the full rendered area.
+            // We need SVG to cover exactly the same area.
+            // The SVG viewBox is 3840x5758 (portrait).
+            // The rendered area is landscape (wide).
+            // We use the same logic as object-fit:fill — stretch SVG to fill renderedW x renderedH.
+            svg.style.width  = renderedW + 'px';
+            svg.style.height = renderedH + 'px';
+            svg.setAttribute('preserveAspectRatio', 'none'); // stretch to match image exactly
+        }
 
         function getImgWidth() {
             return img.offsetWidth || window.innerWidth;
@@ -733,17 +760,23 @@
             lobby.classList.remove('dragging');
         });
 
-        // Start centered
-        function initCenter() {
+        function init() {
+            syncSvgToImage();
+            // Start centered
             translateX = -((getImgWidth() - window.innerWidth) / 2);
             applyTransform();
         }
 
-        if (img.complete) {
-            initCenter();
+        if (img.complete && img.naturalWidth) {
+            init();
         } else {
-            img.addEventListener('load', initCenter);
+            img.addEventListener('load', init);
         }
+
+        window.addEventListener('resize', () => {
+            syncSvgToImage();
+            applyTransform();
+        });
     })();
     </script>
 
