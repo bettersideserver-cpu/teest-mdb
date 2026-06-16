@@ -586,18 +586,7 @@
 
     <!-- JUMPBAR — macOS Dock Style -->
    
-        (function () {
-            const items = document.querySelectorAll('.dock-item'), dockItems = document.getElementById('dockItems');
-            if (window.innerWidth <= 600) { return; }
-            if (!dockItems || !items.length) return;
-            const BASE = 52, MAX = 80, RANGE = 140;
-            function magnify(e) { items.forEach(item => { const icon = item.querySelector('.dock-icon'), svg = item.querySelector('.dock-icon svg'), label = item.querySelector('.dock-label'), rect = item.getBoundingClientRect(), cx = rect.left + rect.width / 2, dist = Math.abs(e.clientX - cx); if (dist < RANGE) { const t = 1 - dist / RANGE, sz = BASE + (MAX - BASE) * t; icon.style.width = sz + 'px'; icon.style.height = sz + 'px'; icon.style.borderRadius = (16 + t * 4) + 'px'; const iSz = 22 + t * 10; svg.style.width = iSz + 'px'; svg.style.height = iSz + 'px'; item.style.width = sz + 'px'; if (t > .7) { icon.style.background = 'linear-gradient(145deg,rgba(201,168,124,.2),rgba(201,168,124,.08))'; icon.style.borderColor = 'rgba(201,168,124,.4)'; icon.style.boxShadow = '0 4px 24px rgba(201,168,124,.2)'; svg.style.stroke = '#c9a87c'; svg.style.filter = 'drop-shadow(0 0 6px rgba(201,168,124,.4))'; label.style.opacity = '1'; label.style.scale = '1'; label.style.translate = '0 0'; } else { reset(icon, svg, label); } } else { icon.style.width = BASE + 'px'; icon.style.height = BASE + 'px'; icon.style.borderRadius = '16px'; svg.style.width = '22px'; svg.style.height = '22px'; item.style.width = BASE + 'px'; reset(icon, svg, label); } }); }
-            function reset(icon, svg, label) { icon.style.background = ''; icon.style.borderColor = ''; icon.style.boxShadow = ''; svg.style.stroke = ''; svg.style.filter = ''; label.style.opacity = '0'; label.style.scale = '.9'; label.style.translate = '0 6px'; }
-            function resetAll() { items.forEach(item => { const icon = item.querySelector('.dock-icon'), svg = item.querySelector('.dock-icon svg'), label = item.querySelector('.dock-label'); icon.style.width = icon.style.height = ''; icon.style.borderRadius = ''; svg.style.width = svg.style.height = ''; item.style.width = ''; reset(icon, svg, label); }); }
-            dockItems.addEventListener('mousemove', magnify); dockItems.addEventListener('mouseleave', resetAll);
-            items.forEach(c => { c.addEventListener('click', e => { c.classList.add('is-bouncing'); c.addEventListener('animationend', () => c.classList.remove('is-bouncing'), { once: true }); const r = document.createElement('span'); r.className = 'dock-ripple'; const icon = c.querySelector('.dock-icon'), b = icon.getBoundingClientRect(), s = Math.max(b.width, b.height); r.style.width = r.style.height = s + 'px'; r.style.left = (e.clientX - b.left - s / 2) + 'px'; r.style.top = (e.clientY - b.top - s / 2) + 'px'; icon.appendChild(r); r.addEventListener('animationend', () => r.remove()); }); });
-        })();
-    </script>
+  
 
     <script>
      window.addEventListener('DOMContentLoaded', () => {

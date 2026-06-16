@@ -639,73 +639,8 @@
     <script src="JS/s2dlrxbqxj.js"></script>
     <script src="JS/ekdxgbwr0o.js"></script>
 
-    <!-- JUMPBAR — macOS Dock Style -->
-    <div class="dock-wrap" id="dock">
-        <div class="dock-shelf"></div>
-        <div class="dock-items" id="dockItems">
-            <a class="dock-item" href="../index.html">
-                <span class="dock-label">Home</span>
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                        <polyline points="9 22 9 12 15 12 15 22" />
-                    </svg></div>
-                <span class="dock-item-label">Home</span><span class="dock-dot"></span>
-            </a>
-            <div class="dock-divider"></div>
-            <a class="dock-item" href="Tower_A.html">
-                <span class="dock-label">Tower A</span>
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 22V4a2 2 0 012-2h8a2 2 0 012 2v18z" />
-                        <path d="M6 12H4a2 2 0 00-2 2v8h4" />
-                        <path d="M18 12h2a2 2 0 012 2v8h-4" />
-                        <path d="M10 7h4" />
-                        <path d="M10 12h4" />
-                        <path d="M10 17h4" />
-                    </svg></div>
-                <span class="dock-item-label">Tower A</span><span class="dock-dot"></span>
-            </a>
-            <div class="dock-divider"></div>
-            <a class="dock-item is-accent" href="1BHK/360/Bedroom.html">
-                <span class="dock-label">Bedroom</span>
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="7" width="20" height="14" rx="2" />
-                        <path d="M2 12h20" />
-                        <path d="M7 12V7" />
-                        <path d="M17 12V7" />
-                    </svg></div>
-                <span class="dock-item-label">Bedroom</span><span class="dock-dot"></span>
-            </a>
-            <div class="dock-divider"></div>
-            <a class="dock-item" href="1BHK/360/Balcony.html">
-                <span class="dock-label">Balcony</span>
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 22h18" />
-                        <path d="M3 16h18" />
-                        <path d="M5 16V10h14v6" />
-                        <path d="M8 16V12" />
-                        <path d="M12 16V10" />
-                        <path d="M16 16V12" />
-                    </svg></div>
-                <span class="dock-item-label">Balcony</span><span class="dock-dot"></span>
-            </a>
-        </div>
-    </div>
-    <script>
-        (function () {
-            const items = document.querySelectorAll('.dock-item'), dockItems = document.getElementById('dockItems');
-            if (window.innerWidth <= 600) { return; }
-        if (!dockItems || !items.length) return;
-            const BASE = 52, MAX = 80, RANGE = 140;
-            function magnify(e) { items.forEach(item => { const icon = item.querySelector('.dock-icon'), svg = item.querySelector('.dock-icon svg'), label = item.querySelector('.dock-label'), rect = item.getBoundingClientRect(), cx = rect.left + rect.width / 2, dist = Math.abs(e.clientX - cx); if (dist < RANGE) { const t = 1 - dist / RANGE, sz = BASE + (MAX - BASE) * t; icon.style.width = sz + 'px'; icon.style.height = sz + 'px'; icon.style.borderRadius = (16 + t * 4) + 'px'; const iSz = 22 + t * 10; svg.style.width = iSz + 'px'; svg.style.height = iSz + 'px'; item.style.width = sz + 'px'; if (t > .7) { icon.style.background = 'linear-gradient(145deg,rgba(201,168,124,.2),rgba(201,168,124,.08))'; icon.style.borderColor = 'rgba(201,168,124,.4)'; icon.style.boxShadow = '0 4px 24px rgba(201,168,124,.2)'; svg.style.stroke = '#c9a87c'; svg.style.filter = 'drop-shadow(0 0 6px rgba(201,168,124,.4))'; label.style.opacity = '1'; label.style.scale = '1'; label.style.translate = '0 0'; } else { reset(icon, svg, label); } } else { icon.style.width = BASE + 'px'; icon.style.height = BASE + 'px'; icon.style.borderRadius = '16px'; svg.style.width = '22px'; svg.style.height = '22px'; item.style.width = BASE + 'px'; reset(icon, svg, label); } }); }
-            function reset(icon, svg, label) { icon.style.background = ''; icon.style.borderColor = ''; icon.style.boxShadow = ''; svg.style.stroke = ''; svg.style.filter = ''; label.style.opacity = '0'; label.style.scale = '.9'; label.style.translate = '0 6px'; }
-            function resetAll() { items.forEach(item => { const icon = item.querySelector('.dock-icon'), svg = item.querySelector('.dock-icon svg'), label = item.querySelector('.dock-label'); icon.style.width = icon.style.height = ''; icon.style.borderRadius = ''; svg.style.width = svg.style.height = ''; item.style.width = ''; reset(icon, svg, label); }); }
-            dockItems.addEventListener('mousemove', magnify); dockItems.addEventListener('mouseleave', resetAll);
-            items.forEach(c => { c.addEventListener('click', e => { c.classList.add('is-bouncing'); c.addEventListener('animationend', () => c.classList.remove('is-bouncing'), { once: true }); const r = document.createElement('span'); r.className = 'dock-ripple'; const icon = c.querySelector('.dock-icon'), b = icon.getBoundingClientRect(), s = Math.max(b.width, b.height); r.style.width = r.style.height = s + 'px'; r.style.left = (e.clientX - b.left - s / 2) + 'px'; r.style.top = (e.clientY - b.top - s / 2) + 'px'; icon.appendChild(r); r.addEventListener('animationend', () => r.remove()); }); });
-        })();
+  
+   
     </script>
 
     <script>
