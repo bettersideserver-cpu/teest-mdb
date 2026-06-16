@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MDB The Lutyens</title>
     <link rel="stylesheet" href="./../wbn05d6fbh.css">
     <link rel="stylesheet" href="./../JS/CSS/Floor-Hint.css">
@@ -1134,140 +1135,106 @@
            MOBILE
            ═══════════════════════════════════════════════ */
         @media (max-width: 768px) {
+            /* ── LEFT PANEL → compact vertical stack, bottom-left above jumpbar ── */
             .left-panel {
                 top: auto;
-                bottom: 110px;
+                bottom: 140px;
                 left: 12px;
-                right: 12px;
+                right: auto;
                 transform: none;
                 width: auto;
-                flex-direction: row;
-                gap: 8px;
-                animation: slide-in-bottom 0.8s var(--ease-out) 0.6s forwards;
+                max-width: 316px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                column-gap: 8px;
+                row-gap: 8px;
+                pointer-events: none;
+                opacity: 0 !important;
+                transform: translateY(12px) !important;
+                transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 0.68, 0, 1.04) !important;
+                animation: none !important;
+            }
+            .left-panel.is-open {
+                pointer-events: auto;
+                opacity: 1 !important;
+                transform: translateY(0) !important;
             }
 
             @keyframes slide-in-bottom {
-                from {
-                    opacity: 0;
-                    transform: translateY(24px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+                from { opacity: 0; transform: translateY(24px); }
+                to { opacity: 1; transform: translateY(0); }
             }
 
-            .panel-header {
-                display: none;
-            }
+            .panel-header { display: none; }
 
+            /* Compact card: icon + name only */
             .property-type {
-                flex: 1;
-                padding: 12px 14px;
-                gap: 10px;
-                background: var(--surface-3);
+                flex: none;
+                width: 100%;
+                padding: 8px 10px 8px 9px;
+                gap: 7px;
+                background: rgba(255,255,255,0.82);
+                border-radius: 9px;
+                min-width: 0;
+                backdrop-filter: blur(16px) saturate(1.4);
+                -webkit-backdrop-filter: blur(16px) saturate(1.4);
             }
+            .property-type:hover { transform: none; background: rgba(255,255,255,0.96); }
+            .pt-icon { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; }
+            .pt-icon svg { width: 12px; height: 12px; }
+            .pt-text { gap: 0; }
+            .pt-name { font-size: 11px; }
+            .pt-sub { display: none; }
+            .pt-arrow { display: none; }
+            .pt-shimmer { display: none; }
 
-            .property-type:hover {
-                transform: none;
-                background: var(--surface-3);
-            }
+            /* ── TOP CONTROLS — smaller on mobile ── */
+            .top-controls { top: 12px; right: 12px; gap: 5px; }
+            .control-btn { padding: 0; width: 32px; height: 32px; justify-content: center; border-radius: 9px; }
+            .control-btn svg { width: 14px; height: 14px; }
+            .control-btn span { display: none; }
+            .menu-btn { width: 32px; height: 32px; border-radius: 9px; }
+            .menu-btn-lines { width: 15px; height: 11px; }
+            .dropdown-menu { top: 52px; right: 12px; width: calc(100vw - 24px); max-width: 300px; }
 
-            .pt-icon {
-                width: 36px;
-                height: 36px;
-            }
-
-            .pt-icon svg {
-                width: 18px;
-                height: 18px;
-            }
-
-            .pt-name {
-                font-size: 15px;
-            }
-
-            .pt-sub {
-                font-size: 9px;
-                letter-spacing: 1.4px;
-            }
-
-            .pt-arrow {
-                display: none;
-            }
-
-            .top-controls {
-                top: 12px;
-                right: 12px;
-                gap: 6px;
-            }
-
-            .control-btn {
-                padding: 10px;
-                width: 38px;
-                height: 38px;
-                justify-content: center;
-            }
-
-            .control-btn span {
-                display: none;
-            }
-
-            .menu-btn {
-                width: 38px;
-                height: 38px;
-            }
-
-            .dropdown-menu {
-                top: 60px;
-                right: 12px;
-                width: calc(100vw - 24px);
-                max-width: 300px;
-            }
-
-            .jumpbar {
-                bottom: 14px;
-                padding: 4px;
-            }
-
-            .jumpbar-brand {
-                padding: 0 12px 0 14px;
-                height: 36px;
-            }
-
-            .jumpbar-brand-line {
-                font-size: 7px;
-                letter-spacing: 2.5px;
-            }
-
-            .jumpbar-brand-name {
-                font-size: 13px;
-            }
-
+            /* ── JUMPBAR — icon + label ── */
+            .jumpbar { bottom: 14px; padding: 4px 6px; }
+            .jumpbar-brand { padding: 0 12px 0 14px; height: 40px; }
+            .jumpbar-brand-line { font-size: 7px; letter-spacing: 2.5px; }
+            .jumpbar-brand-name { font-size: 13px; }
             .jumpbar-item {
-                padding: 8px 12px;
+                padding: 6px 10px;
                 gap: 0;
+                flex-direction: column;
+                align-items: center;
+                border-radius: 14px;
+                min-width: 48px;
             }
-
+            .jumpbar-item svg { width: 16px; height: 16px; margin-bottom: 3px; }
             .jumpbar-item span {
-                display: none;
+                display: block;
+                font-size: 9px;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                font-weight: 500;
+                line-height: 1;
+                white-space: nowrap;
             }
 
-            .jumpbar-item svg {
-                width: 16px;
-                height: 16px;
-            }
+            /* ── ENQUIRY BUTTON ── */
+            .enquiry-btn { font-size: 9px; padding: 14px 7px; letter-spacing: 1.5px; }
         }
 
         @media (max-width: 420px) {
-            .jumpbar-brand {
-                display: none;
-            }
-
-            .jumpbar-item {
-                padding: 8px 10px;
-            }
+            .jumpbar-brand { display: none; }
+            .jumpbar-item { padding: 5px 8px; min-width: 40px; }
+            .jumpbar-item span { font-size: 8px; }
+            .jumpbar-item svg { width: 15px; height: 15px; }
+            .left-panel { bottom: 140px; max-width: 316px; column-gap: 8px; row-gap: 8px; }
+            .property-type { padding: 6px 10px 6px 8px; gap: 7px; }
+            .pt-name { font-size: 11.5px; }
+            .pt-icon { width: 26px; height: 26px; }
+            .pt-icon svg { width: 13px; height: 13px; }
         }
 
         /* ═══════════════════════════════════════════════
@@ -1530,6 +1497,48 @@
             }
         }
         
+
+        /* ═══════════════════════════════════════════════
+           MOBILE PANEL TOGGLE
+           ═══════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .panel-toggle-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--gold-light), var(--gold));
+                border: none;
+                cursor: pointer;
+                box-shadow: 0 4px 18px rgba(168,120,42,0.35), 0 2px 8px rgba(0,0,0,0.25);
+                position: fixed;
+                bottom: 88px;
+                left: 16px;
+                z-index: 10001;
+                transition: transform 0.35s var(--ease-spring), box-shadow 0.3s ease;
+                opacity: 0;
+                animation: slide-in-bottom 0.8s var(--ease-out) 0.6s forwards;
+            }
+            .panel-toggle-btn svg {
+                width: 18px;
+                height: 18px;
+                stroke: #111;
+                stroke-width: 2.2;
+                transition: transform 0.4s var(--ease-spring);
+            }
+            .panel-toggle-btn.is-open svg {
+                transform: rotate(180deg);
+            }
+            .panel-toggle-btn:active {
+                transform: scale(0.92);
+            }
+        }
+        @media (min-width: 769px) {
+            .panel-toggle-btn { display: none; }
+        }
+
     </style>
 </head>
 
@@ -1581,6 +1590,13 @@
     <button class="close-btn" id="closeCard">&larr;</button>
 
     <div id="floorTip" class="floortip" aria-hidden="true"></div>
+
+    <!-- ═══ MOBILE PANEL TOGGLE ═══ -->
+    <button class="panel-toggle-btn" id="panelToggleBtn" aria-label="Show residence types">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </button>
 
     <!-- ═══ LEFT PANEL — Residences ═══ -->
     <aside class="left-panel" aria-label="Residence Types">
@@ -2134,6 +2150,21 @@
         }
 
     </script>
+
+    <script>
+        // ── Mobile panel toggle ──
+        (function () {
+            var btn = document.getElementById('panelToggleBtn');
+            var panel = document.querySelector('.left-panel');
+            if (!btn || !panel) return;
+            btn.addEventListener('click', function () {
+                var open = panel.classList.toggle('is-open');
+                btn.classList.toggle('is-open', open);
+                btn.setAttribute('aria-expanded', open);
+            });
+        })();
+    </script>
+
 </body>
 
 </html>
