@@ -102,6 +102,11 @@
                 width: 100vw !important;
                 height: 100vh !important;
                 position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                touch-action: none !important;
+                overscroll-behavior: none !important;
+                -webkit-overflow-scrolling: auto !important;
             }
 
             .lobby-top {
@@ -113,6 +118,8 @@
                 transform-origin: top left;
                 transform: rotate(90deg) translateY(-100%);
                 background-color: #070707;
+                touch-action: none !important;
+                overscroll-behavior: none !important;
             }
 
             .lobby-top.dragging {
@@ -153,7 +160,7 @@
                 position: absolute !important;
                 top: 50% !important;
                 left: 50% !important;
-                transform: translate(-50%, -100%) !important;
+                transform: translate(-50%, -300%) !important;
                 width: auto !important;
                 height: auto !important;
                 min-width: 100% !important;
@@ -676,9 +683,28 @@
     (function () {
         if (window.innerWidth > 600) return;
 
-        // Prevent ALL scrolling/bouncing
-        document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
-        document.addEventListener('scroll', function(e) { e.preventDefault(); window.scrollTo(0,0); }, { passive: false });
+        // Hard block every possible scroll trigger
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.height = '100%';
+        document.body.style.top = '0';
+        document.body.style.left = '0';
+
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }, { passive: false, capture: true });
+
+        document.addEventListener('scroll', function(e) {
+            e.preventDefault();
+            window.scrollTo(0, 0);
+        }, { passive: false, capture: true });
+
+        window.addEventListener('scroll', function(e) {
+            window.scrollTo(0, 0);
+        }, { passive: false });
 
         function fixSize() {
             const lobby = document.getElementById('lobbyTop');
