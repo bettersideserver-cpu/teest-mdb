@@ -691,30 +691,64 @@
         const SVG_RATIO = SVG_W / SVG_H; // portrait ~0.667
 
         function syncSvgToImage() {
-            // Rendered image size: height = 100vh, width = auto (keeps aspect ratio)
-            const renderedH = window.innerHeight;
-            const renderedW = img.offsetWidth; // actual px width after CSS
+            // Image natural size declared in HTML: 4096 x 4096 (square)
+            const IMG_NAT_W = img.naturalWidth  || 4096;
+            const IMG_NAT_H = img.naturalHeight || 4096;
+            const IMG_RATIO = IMG_NAT_W / IMG_NAT_H;
 
-            // Set wrapper width to match image
+            // On mobile: image height = 100vh, width = auto preserving ratio
+            const renderedH = window.innerHeight;
+            const renderedW = renderedH * IMG_RATIO; // actual rendered width
+
+            // Force image to that size
+            img.style.width  = renderedW + 'px';
+            img.style.height = renderedH + 'px';
+
+            // Wrapper matches
             wrapper.style.width  = renderedW + 'px';
             wrapper.style.height = renderedH + 'px';
 
-            // Cutout fills wrapper exactly
+            // Cutout fills wrapper
             cutout.style.width  = renderedW + 'px';
             cutout.style.height = renderedH + 'px';
 
-            // The image covers the full rendered area.
-            // We need SVG to cover exactly the same area.
-            // The SVG viewBox is 3840x5758 (portrait).
-            // The rendered area is landscape (wide).
-            // We use the same logic as object-fit:fill — stretch SVG to fill renderedW x renderedH.
-            svg.style.width  = renderedW + 'px';
-            svg.style.height = renderedH + 'px';
-            svg.setAttribute('preserveAspectRatio', 'none'); // stretch to match image exactly
+            // SVG viewBox is 3840x5758 — we need to figure out how the
+            // desktop version aligns it to the 4096x4096 image.
+            // Desktop: image fills 100vw x 100vh with object-fit:cover (center).
+            // SVG is position:fixed, centered, min-width/height 100% of viewport.
+            // The SVG scales so its SHORTER axis fits the viewport, then center-aligns.
+            // viewBox ratio = 3840/5758 ≈ 0.667 (portrait)
+            // On a square viewport: SVG height fits vh (min-height 100%), so
+            //   svgRenderedH = vh, svgRenderedW = vh * (3840/5758)
+            // But actually on desktop: min-width:100% AND min-height:100% means
+            //   whichever makes it bigger wins. On square screen:
+            //   if width=100vw → height = 100vw*(5758/3840) > 100vh (portrait svg is TALLER)
+            //   so width=100vw is the binding constraint.
+            // svgRenderedW = vw, svgRenderedH = vw*(5758/3840)
+            // Center offset: svgTop = (vh - svgRenderedH)/2 (negative, it overflows up)
+
+            // On mobile we reproduce this same mapping:
+            // We want the SVG coordinate at (x,y) in viewBox to map to the same
+            // pixel in the image as it does on desktop.
+            // Desktop vw = desktop vh = assumed square (e.g. 800px for calculation)
+            // Mobile: image is renderedW x renderedH where renderedW = renderedH (since IMG_RATIO=1)
+            // So the image is square on mobile too! SVG just needs same treatment:
+            // svgRenderedW = renderedW (= renderedH since square image)
+            // svgRenderedH = renderedW * (5758/3840)
+            const SVG_VB_W = 3840, SVG_VB_H = 5758;
+            const svgRenderedW = renderedW; // svg width = image width
+            const svgRenderedH = svgRenderedW * (SVG_VB_H / SVG_VB_W);
+            const svgOffsetTop = (renderedH - svgRenderedH) / 2; // will be negative (overflows)
+
+            svg.style.width  = svgRenderedW + 'px';
+            svg.style.height = svgRenderedH + 'px';
+            svg.style.top    = svgOffsetTop + 'px';
+            svg.style.left   = '0px';
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         }
 
         function getImgWidth() {
-            return img.offsetWidth || window.innerWidth;
+            return parseFloat(img.style.width) || img.offsetWidth || window.innerWidth;
         }
 
         function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
@@ -767,7 +801,8 @@
             applyTransform();
         }
 
-        if (img.complete && img.naturalWidth) {
+        // Always wait for full load so naturalWidth is reliable
+        if (img.complete && img.naturalWidth && img.naturalWidth > 0) {
             init();
         } else {
             img.addEventListener('load', init);
