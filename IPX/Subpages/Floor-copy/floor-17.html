@@ -118,7 +118,7 @@
 
         @media (max-width: 600px) {
             .lobby-top {
-                overflow: hidden;
+                overflow: visible;
                 cursor: grab;
                 align-items: flex-start;
                 justify-content: flex-start;
@@ -156,7 +156,7 @@
                 width: 100% !important;
                 height: 100% !important;
                 transform: none !important;
-                overflow: hidden; /* clip slice overflow */
+                overflow: visible;
             }
 
             /* SVG fills container; preserveAspectRatio="xMidYMid slice" handles scaling */
@@ -164,9 +164,9 @@
                 position: absolute;
                 top: 0;
                 left: 0;
-                transform: translateY(350px) !important;
+                transform: translateY(-150px) !important;
                 width: 100% !important;
-                height: 100% !important;
+                height: auto !important;
                 min-width: unset;
                 min-height: unset;
             }
