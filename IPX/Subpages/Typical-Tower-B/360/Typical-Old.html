@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Typical Tour</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.124.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/panolens@0.12.0/build/panolens.min.js"></script>
@@ -96,22 +97,22 @@
         /* ── Back Button ── */
         #backBtn {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 16px;
+            left: 16px;
             z-index: 10000;
-
             border: none;
-            border-radius: 30px;
-
-            padding: 12px 20px;
-
-            background: rgba(0, 0, 0, .5);
+            border-radius: 12px;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            background: rgba(0, 0, 0, .55);
             color: white;
-
-            backdrop-filter: blur(10px);
-
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             cursor: pointer;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #backBtn:hover {
@@ -173,12 +174,169 @@
         #roomInfoCard .hud-accent {
             color: #ffffff;
         }
+
+
+        /* ── Floor Pill (vertical: ▲ · Floor 01 · ▼) ── */
+        #balconyControls {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 10001;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(15, 15, 15, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 20px;
+            padding: 6px;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        #balconyControls .floor-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 14px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s, color .2s;
+            flex-shrink: 0;
+        }
+
+        #balconyControls .floor-btn:hover {
+            background: rgba(255, 255, 255, 0.13);
+            color: #fff;
+        }
+
+        #balconyControls .floor-btn svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
+        #floorIndicator {
+            font-family: 'Jost', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.08em;
+            text-align: center;
+            padding: 10px 0;
+            width: 44px;
+            border-top: 1px solid rgba(255, 255, 255, 0.09);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+            display: block;
+            line-height: 1.5;
+            text-transform: uppercase;
+        }
+        /* ── Desktop: keep nav centered ── */
+        @media (min-width: 769px) {
+            .tour-nav-wrap {
+                position: fixed !important;
+                bottom: 12px !important;
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) !important;
+                width: auto !important;
+                z-index: 10000 !important;
+            }
+            .scroll-arrow { display: none !important; }
+            .tour-nav-wrap .tour-nav { position: static !important; transform: none !important; left: auto !important; right: auto !important; bottom: auto !important; }
+        }
+
+        /* ── Scroll Arrow Hint ── */
+        .tour-nav-wrap {
+            position: fixed;
+            bottom: 10px;
+            left: 8px;
+            right: 8px;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+        }
+        .tour-nav-wrap .tour-nav { position: static; transform: none; flex: 1; min-width: 0; }
+        .scroll-arrow {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 34px;
+            flex-shrink: 0;
+            margin-left: 4px;
+            background: rgba(70,70,70,0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .scroll-arrow svg { width: 14px; height: 14px; color: white; opacity: 0.85; }
+        .scroll-arrow.hidden { opacity: 0; }
+
+        /* ── Mobile Responsive ── */
+        @media (max-width: 768px) {
+            .tour-nav {
+                bottom: 10px; left: 8px; right: 8px; transform: none;
+                overflow-x: auto; overflow-y: hidden;
+                -webkit-overflow-scrolling: touch; scrollbar-width: none;
+                flex-wrap: nowrap; padding: 6px 8px;
+                border-radius: 14px; gap: 6px; max-width: calc(100vw - 16px);
+            }
+            .tour-nav::-webkit-scrollbar { display: none; }
+            .tour-pill { height: 40px; padding: 0 14px; font-size: 13px; border-radius: 10px; flex-shrink: 0; }
+            .tour-pill svg { width: 16px; height: 16px; }
+            .scroll-arrow { display: flex; }
+            #roomInfoCard {
+                top: 16px; right: 10px; left: auto;
+                padding: 10px 14px; border-radius: 12px; max-width: calc(100vw - 100px);
+            }
+            #roomInfoCard .hud-name { font-size: 18px; margin-bottom: 4px; }
+            #roomInfoCard .hud-dims { font-size: 13px; margin-bottom: 2px; }
+            #roomInfoCard .hud-sqft { font-size: 12px; }
+
+            /* Back button — small on mobile */
+            
+            /* Floor controls — move to left center on mobile */
+            #balconyControls {
+                right: auto;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            #backBtn {
+                width: 34px !important;
+                height: 34px !important;
+                font-size: 16px !important;
+                top: 12px !important;
+                left: 12px !important;
+                padding: 0 !important;
+                border-radius: 10px !important;
+                background: #2c2c2c !important;
+                backdrop-filter: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                line-height: 1 !important;
+            }
+        }
+        @media (max-width: 400px) {
+            .tour-pill { height: 38px; padding: 0 12px; font-size: 12px; }
+        }
     </style>
 </head>
 
 <body>
 
-    <button id="backBtn">← Back</button>
+    <button id="backBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
 
     <div id="roomInfoCard">
         <div class="hud-name" id="cardName">Room</div>
@@ -193,6 +351,7 @@
     <div id="viewer"></div>
 
     <!-- Bottom panel with room navigation pills -->
+    <div class="tour-nav-wrap" id="tourNavWrap">
     <div class="tour-nav" id="tourNav">
 
         <button class="tour-pill active" onclick="goToRoom('lobby', this)">
@@ -252,6 +411,25 @@
             <span>Balcony</span>
         </button>
 
+    </div>
+    <div class="scroll-arrow" id="scrollArrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>
+    </div>
+
+    <!-- Floor Pill -->
+    <div id="balconyControls">
+        <button class="floor-btn" id="floorUpBtn" title="Floor Up">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 15L12 9L18 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div id="floorIndicator">FL<br>01</div>
+        <button class="floor-btn" id="floorDownBtn" title="Floor Down">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
     </div>
 
     <script>
@@ -347,14 +525,77 @@
             room_2: new PANOLENS.ImagePanorama("images/room-2.jpg"),
             room_3: new PANOLENS.ImagePanorama("images/room-3.jpg"),
             kitchen: new PANOLENS.ImagePanorama("images/kitchen.jpg"),
-            balcony: new PANOLENS.ImagePanorama(
-                `../../Balcony/360/Tower_B/images/Balcony_${selectedFloor}.jpg`
-            )
+            balcony: null  // will be set after floor system init
 
         };
 
+        
+        // ── Balcony floor system ──
+        let currentBalconyFloor = parseInt(selectedFloor) || 1;
+
+        function createBalconyPanorama(floor) {
+            return new PANOLENS.ImagePanorama(
+                `../../Balcony/360/Tower_B/images/Balcony_${String(floor).padStart(2, '0')}.jpg`
+            );
+        }
+
+        rooms.balcony = createBalconyPanorama(currentBalconyFloor);
+
         Object.values(rooms).forEach(p => viewer.add(p));
         Object.values(rooms).forEach(room => { room.fadeDuration = 1200; });
+        // ── Floor indicator ──
+        function updateFloorIndicator() {
+            document.getElementById("floorIndicator").innerHTML =
+                `FL<br>${String(currentBalconyFloor).padStart(2, '0')}`;
+        }
+
+        // ── Show/hide floor pill ──
+        function updateBalconyControls(roomName) {
+            const controls = document.getElementById("balconyControls");
+            if (roomName === "balcony") {
+                controls.style.display = "flex";
+                updateFloorIndicator();
+            } else {
+                controls.style.display = "none";
+            }
+        }
+
+        // ── Change floor ──
+        function changeBalconyFloor(direction) {
+            const next = currentBalconyFloor + direction;
+            if (next < 1 || next > 17) return;
+            currentBalconyFloor = next;
+            updateFloorIndicator();
+            const panorama = createBalconyPanorama(currentBalconyFloor);
+            viewer.add(panorama);
+            panorama.fadeDuration = 1200;
+
+            // Re-add back hotspot
+            const spot = new PANOLENS.Infospot(500, ARROW_ICON);
+            const r = 5000;
+            const yaw = 130;
+            const pitch = -6;
+            const phi = THREE.MathUtils.degToRad(90 - pitch);
+            const theta = THREE.MathUtils.degToRad(yaw);
+            spot.position.set(
+                r * Math.sin(phi) * Math.cos(theta),
+                r * Math.cos(phi),
+                r * Math.sin(phi) * Math.sin(theta)
+            );
+            spot.addHoverText("Master Bedroom");
+            spot.addEventListener("click", () => {
+                viewer.setPanorama(rooms["room_1"]);
+                updateBalconyControls("room_1");
+            });
+            panorama.add(spot);
+
+            rooms.balcony = panorama;
+            viewer.setPanorama(panorama);
+        }
+
+        document.getElementById("floorUpBtn").addEventListener("click", () => changeBalconyFloor(1));
+        document.getElementById("floorDownBtn").addEventListener("click", () => changeBalconyFloor(-1));
+
 
         function lookAtYaw(yaw, pitch = 0) {
             const r = 5000;
@@ -398,6 +639,7 @@
                             viewer.camera.updateProjectionMatrix();
                             setTimeout(() => { overlay.style.opacity = 0; }, 300);
                             showInfoCard(to);
+                            updateBalconyControls(to);
                         }
                     }
                     zoom();
@@ -444,6 +686,7 @@
                 viewer.camera.fov = 100;
                 viewer.camera.updateProjectionMatrix();
                 overlay.style.opacity = 0;
+                updateBalconyControls(roomName);
                 showInfoCard(roomName);
             }, 300);
         }
@@ -497,6 +740,7 @@
         if (rooms[initialRoom]) {
             viewer.setPanorama(rooms[initialRoom]);
             showInfoCard(initialRoom);
+            updateBalconyControls(initialRoom);
 
             // Highlight correct pill
             document.querySelectorAll('.tour-pill').forEach(p => {
@@ -510,6 +754,7 @@
         } else {
             viewer.setPanorama(rooms.lobby);
             showInfoCard('lobby');
+            updateBalconyControls('lobby');
         }
 
 
@@ -517,6 +762,18 @@
             window.history.back();
         });
 
+        // Scroll arrow hint
+        const tourNav = document.getElementById('tourNav');
+        const scrollArrow = document.getElementById('scrollArrow');
+        if (tourNav && scrollArrow) {
+            function updateScrollArrow() {
+                const atEnd = tourNav.scrollLeft + tourNav.clientWidth >= tourNav.scrollWidth - 4;
+                scrollArrow.classList.toggle('hidden', atEnd);
+            }
+            tourNav.addEventListener('scroll', updateScrollArrow);
+            window.addEventListener('resize', updateScrollArrow);
+            updateScrollArrow();
+        }
 
     </script>
 

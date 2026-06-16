@@ -407,7 +407,82 @@
             font-size: 13px;
             color: #aaaaaa;
         }
-    </style>
+    
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 600px) {
+        #dock, .dock {
+            width: 100vw !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            transform: none !important;
+            border-radius: 0 !important;
+            padding: 4px 0 !important;
+            display: flex !important;
+            justify-content: space-around !important;
+            align-items: center !important;
+        }
+        .dock-item {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex: 1 !important;
+            gap: 2px !important;
+            padding: 4px 2px !important;
+            transform: none !important;
+            width: auto !important;
+            height: auto !important;
+        }
+        .dock-icon, .dock-item img, .dock-item svg {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            min-height: 44px !important;
+            max-width: 44px !important;
+            max-height: 44px !important;
+            transform: none !important;
+        }
+        .dock-item-label {
+            display: block !important;
+            font-size: 10px !important;
+            color: #fff !important;
+            text-align: center !important;
+            margin-top: 2px !important;
+        }
+        .dock-item::after, .dock-item::before {
+            display: none !important;
+        }
+        #lobby, .lobby {
+            padding-bottom: 70px !important;
+        }
+        .close-btn, .close-btn2, #closeBtn, #closeBtn2 {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 28px !important;
+            top: 16px !important;
+            left: 16px !important;
+            position: fixed !important;
+            z-index: 99999 !important;
+        }
+        #mobileAptPanel {
+            display: none;
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 16px;
+            z-index: 99998;
+            border-radius: 12px 12px 0 0;
+            font-size: 15px;
+        }
+        .apt-tooltip, .tooltip, [class*="tooltip"] {
+            display: none !important;
+        }
+    }
+</style>
 </head>
 
 <body>
@@ -430,7 +505,7 @@
         </svg>
     </button>
     <div id="waLabel" class="wa-label">Chat on WhatsApp</div> -->
-    <button class="close-btn2" id="closeCard">←</button>
+    <button class="close-btn2" id="closeCard" style="width:60px!important;height:60px!important;font-size:28px!important;top:16px!important;left:16px!important;position:fixed!important;z-index:99999!important;background-color:#2c2c2c!important;color:white!important;border:none!important;border-radius:16px!important;display:flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important;">←</button>
     <div class="lobby-top">
         <div class="content-wrapper">
             <!-- <img src="./../../images/Apparments/1BHK/Lobby_Top.jpg" alt="Penthouse Lobby Image" /> -->
@@ -633,7 +708,8 @@
     <script>
         (function () {
             const items = document.querySelectorAll('.dock-item'), dockItems = document.getElementById('dockItems');
-            if (!dockItems || !items.length) return;
+            if (window.innerWidth <= 600) { return; }
+        if (!dockItems || !items.length) return;
             const BASE = 52, MAX = 80, RANGE = 140;
             function magnify(e) { items.forEach(item => { const icon = item.querySelector('.dock-icon'), svg = item.querySelector('.dock-icon svg'), label = item.querySelector('.dock-label'), rect = item.getBoundingClientRect(), cx = rect.left + rect.width / 2, dist = Math.abs(e.clientX - cx); if (dist < RANGE) { const t = 1 - dist / RANGE, sz = BASE + (MAX - BASE) * t; icon.style.width = sz + 'px'; icon.style.height = sz + 'px'; icon.style.borderRadius = (16 + t * 4) + 'px'; const iSz = 22 + t * 10; svg.style.width = iSz + 'px'; svg.style.height = iSz + 'px'; item.style.width = sz + 'px'; if (t > .7) { icon.style.background = 'linear-gradient(145deg,rgba(201,168,124,.2),rgba(201,168,124,.08))'; icon.style.borderColor = 'rgba(201,168,124,.4)'; icon.style.boxShadow = '0 4px 24px rgba(201,168,124,.2)'; svg.style.stroke = '#c9a87c'; svg.style.filter = 'drop-shadow(0 0 6px rgba(201,168,124,.4))'; label.style.opacity = '1'; label.style.scale = '1'; label.style.translate = '0 0'; } else { reset(icon, svg, label); } } else { icon.style.width = BASE + 'px'; icon.style.height = BASE + 'px'; icon.style.borderRadius = '16px'; svg.style.width = '22px'; svg.style.height = '22px'; item.style.width = BASE + 'px'; reset(icon, svg, label); } }); }
             function reset(icon, svg, label) { icon.style.background = ''; icon.style.borderColor = ''; icon.style.boxShadow = ''; svg.style.stroke = ''; svg.style.filter = ''; label.style.opacity = '0'; label.style.scale = '.9'; label.style.translate = '0 6px'; }
