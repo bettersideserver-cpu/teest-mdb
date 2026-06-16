@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
   <title>MDB The Lutyens</title>
@@ -247,10 +248,162 @@
     .tour-pill.active {
       background: #111;
     }
+
+    /* ── Back Button ── */
+    #backBtn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 99999;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: none;
+      border-radius: 12px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    #backBtn:hover { background: rgba(0,0,0,.75); }
+
+    /* ── Tour Nav Wrap ── */
+    .tour-nav-wrap {
+      position: fixed;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 10000;
+      pointer-events: none;
+    }
+    .tour-nav-wrap > * { pointer-events: auto; }
+
+    .scroll-hint {
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      color: rgba(255,255,255,.5);
+      letter-spacing: 1px;
+      display: none;
+    }
+
+    /* ── Desktop nav centering (override base .tour-nav) ── */
+    @media (min-width: 769px) {
+      .tour-nav-wrap {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: max-content !important;
+        bottom: 12px !important;
+      }
+      .tour-nav {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+      }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      #backBtn {
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 10px !important;
+        background: #2c2c2c !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        top: 12px !important;
+        left: 12px !important;
+      }
+      .tour-nav-wrap {
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        bottom: 8px !important;
+        padding: 0 8px !important;
+        box-sizing: border-box !important;
+      }
+      .tour-nav {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+        padding: 6px 8px !important;
+        box-sizing: border-box !important;
+      }
+      .tour-nav::-webkit-scrollbar { display: none !important; }
+      .scroll-hint { display: block; }
+      .tour-pill {
+        flex-shrink: 0 !important;
+        height: 38px !important;
+        padding: 0 14px !important;
+        font-size: 12px !important;
+      }
+    }
+
+    /* ── Force tour-pill overrides (beat external stylesheet) ── */
+    .tour-nav .tour-pill,
+    .tour-nav a.tour-pill {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      height: 34px !important;
+      padding: 0 12px !important;
+      background: #2b2b2b !important;
+      color: #fff !important;
+      border: none !important;
+      border-radius: 10px !important;
+      font-family: 'Jost', sans-serif !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      transition: .25s !important;
+      text-decoration: none !important;
+      flex-shrink: 0 !important;
+    }
+    .tour-nav .tour-pill:hover,
+    .tour-nav a.tour-pill:hover {
+      background: #353535 !important;
+      transform: translateY(-1px) !important;
+    }
+    .tour-nav .tour-pill.active,
+    .tour-nav a.tour-pill.active {
+      background: #111 !important;
+    }
+    .tour-nav .tour-pill svg,
+    .tour-nav a.tour-pill svg {
+      width: 16px !important;
+      height: 16px !important;
+      flex-shrink: 0 !important;
+      display: block !important;
+      color: #fff !important;
+      stroke: currentColor !important;
+    }
   </style>
 </head>
 
 <body>
+  <button id="backBtn" aria-label="Go back">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
 
   <div class="main-container">
 
@@ -320,7 +473,6 @@
     </svg>
   </button>
   <div id="waLabel" class="wa-label">Chat on WhatsApp</div> -->
-  <button class="close-btn" id="closeCard">←</button>
   <div class="main-container">
     <div class="image-container"></div>
   </div>
@@ -339,13 +491,53 @@
 
   <script>
     function createArrowSVG() {
-      const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <polygon points="50,20 75,65 50,55 25,65" fill="Black"/>
-  </svg>
-  `;
-      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    }
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+    <defs>
+      <radialGradient id="glassFill" cx="50%" cy="40%" r="60%">
+        <stop offset="0%"  stop-color="rgba(255,255,255,0.28)"/>
+        <stop offset="55%" stop-color="rgba(255,255,255,0.10)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0.04)"/>
+      </radialGradient>
+      <linearGradient id="glassHighlight" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%"  stop-color="rgba(255,255,255,0.35)"/>
+        <stop offset="45%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+      <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+        <feOffset dx="0" dy="2" result="offsetblur"/>
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.45"/>
+        </feComponentTransfer>
+        <feMerge>
+          <feMergeNode/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <radialGradient id="dotFill" cx="50%" cy="45%" r="50%">
+        <stop offset="0%"  stop-color="#123a8a"/>
+        <stop offset="100%" stop-color="#0A1F44"/>
+      </radialGradient>
+    </defs>
+    <g filter="url(#softShadow)">
+      <circle cx="64" cy="64" r="44"
+              fill="url(#glassFill)"
+              stroke="rgba(255,255,255,0.22)"
+              stroke-width="1.2"/>
+      <circle cx="64" cy="64" r="44"
+              fill="url(#glassHighlight)"
+              opacity="0.9"/>
+      <circle cx="64" cy="64" r="38"
+              fill="none"
+              stroke="rgba(255,255,255,0.08)"
+              stroke-width="1"/>
+    </g>
+    <circle cx="64" cy="64" r="6.5" fill="url(#dotFill)"/>
+    <circle cx="62.5" cy="62" r="1.6" fill="rgba(255,255,255,0.55)"/>
+  </svg>`;
+
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
   </script>
 
 
@@ -468,20 +660,6 @@
       console.warn("⚠️ Failed to load high-res:", e);
     });
   </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const closeCard = document.getElementById("closeCard");
-
-      if (closeCard) {
-        closeCard.addEventListener("click", () => {
-          // 🔹 Change this path to wherever you want the button to take you
-          // window.location.href = "./../../../Subpages/3BHK/Lobby_Top.html";
-          window.location.href = "./../../../Subpages/Tower_A.html";
-          // Example: "../index.html" or "../Subpages/Tower_A.html"
-        });
-      }
-    });
-  </script>
 
 
 
@@ -494,8 +672,10 @@
   <script src="./../../../JS/imageloader.js"></script>
   <script src="./../../../JS/Whatsapp.js"></script>
   <!-- Tour Nav (pill bar) -->
-  <nav class="tour-nav" id="tourNav">
-    <a class="tour-pill" href="Cafe.html">
+  <div class="tour-nav-wrap">
+    <div class="scroll-hint">← swipe to see more →</div>
+    <nav class="tour-nav" id="tourNav">
+    <a href="Cafe.html" class="tour-pill">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M6 2v4M9 2v4M12 2v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         <path d="M4 8h16v2a6 6 0 0 1-6 6H10A6 6 0 0 1 4 10V8Z" stroke="currentColor" stroke-width="1.8"/>
@@ -504,7 +684,7 @@
       </svg>
       <span>Cafe</span>
     </a>
-    <a class="tour-pill" href="Gym.html">
+    <a href="Gym.html" class="tour-pill">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M6 8H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         <path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -513,20 +693,20 @@
       </svg>
       <span>Gym</span>
     </a>
-    <a class="tour-pill" href="Library.html">
+    <a href="Library.html" class="tour-pill active">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M4 4h4v16H4zM10 4h4v16h-4zM16 4l4 1v14l-4-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
       </svg>
       <span>Library</span>
     </a>
-    <a class="tour-pill" href="KittyHall.html">
+    <a href="KittyHall.html" class="tour-pill">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M4 10L12 4L20 10V20H4V10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
         <path d="M9 20V14H15V20" stroke="currentColor" stroke-width="1.8"/>
       </svg>
       <span>Kitty Hall</span>
     </a>
-    <a class="tour-pill" href="Pool.html">
+    <a href="Pool.html" class="tour-pill">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M2 17c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0 3 2 4.5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         <path d="M2 12c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0 3 2 4.5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -535,6 +715,29 @@
       <span>Pool</span>
     </a>
   </nav>
+  </div>
+  <script>
+    // Back button
+    document.getElementById('backBtn').addEventListener('click', () => {
+      window.location.href = "./../../../Subpages/Tower_A.html";
+    });
+
+    // Scroll hint
+    (function(){
+      const nav = document.getElementById('tourNav');
+      const hint = document.querySelector('.scroll-hint');
+      if (!nav || !hint) return;
+      function checkScroll() {
+        if (nav.scrollWidth > nav.clientWidth) {
+          hint.style.display = 'block';
+        } else {
+          hint.style.display = 'none';
+        }
+      }
+      checkScroll();
+      window.addEventListener('resize', checkScroll);
+    })();
+  </script>
 </body>
 
 </html>

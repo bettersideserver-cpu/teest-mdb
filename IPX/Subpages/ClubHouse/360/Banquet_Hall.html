@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
   <title>MDB The Lutyens</title>
@@ -247,10 +248,122 @@
     .tour-pill.active {
       background: #111;
     }
+
+    /* ── Back Button ── */
+    #backBtn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 99999;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: none;
+      border-radius: 12px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    #backBtn:hover { background: rgba(0,0,0,.75); }
+
+    /* ── Tour Nav Wrap ── */
+    .tour-nav-wrap {
+      position: fixed;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 10000;
+      pointer-events: none;
+    }
+    .tour-nav-wrap > * { pointer-events: auto; }
+
+    .scroll-hint {
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      color: rgba(255,255,255,.5);
+      letter-spacing: 1px;
+      display: none;
+    }
+
+    /* ── Desktop nav centering (override base .tour-nav) ── */
+    @media (min-width: 769px) {
+      .tour-nav-wrap {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: max-content !important;
+        bottom: 12px !important;
+      }
+      .tour-nav {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+      }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      #backBtn {
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 10px !important;
+        background: #2c2c2c !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        top: 12px !important;
+        left: 12px !important;
+      }
+      .tour-nav-wrap {
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        bottom: 8px !important;
+        padding: 0 8px !important;
+        box-sizing: border-box !important;
+      }
+      .tour-nav {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+        padding: 6px 8px !important;
+        box-sizing: border-box !important;
+      }
+      .tour-nav::-webkit-scrollbar { display: none !important; }
+      .scroll-hint { display: block; }
+      .tour-pill {
+        flex-shrink: 0 !important;
+        height: 38px !important;
+        padding: 0 14px !important;
+        font-size: 12px !important;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <button id="backBtn" aria-label="Go back">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
 
   <div class="main-container">
 
@@ -320,7 +433,6 @@
     </svg>
   </button>
   <div id="waLabel" class="wa-label">Chat on WhatsApp</div> -->
-  <button class="close-btn" id="closeCard">←</button>
   <div class="main-container">
     <div class="image-container"></div>
   </div>
@@ -522,20 +634,6 @@
       console.warn("⚠️ Failed to load high-res:", e);
     });
   </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const closeCard = document.getElementById("closeCard");
-
-      if (closeCard) {
-        closeCard.addEventListener("click", () => {
-          // 🔹 Change this path to wherever you want the button to take you
-          // window.location.href = "./../../../Subpages/3BHK/Lobby_Top.html";
-          window.location.href = "./../../../Subpages/Tower_A.html";
-          // Example: "../index.html" or "../Subpages/Tower_A.html"
-        });
-      }
-    });
-  </script>
 
 
 
@@ -548,7 +646,9 @@
   <script src="./../../../JS/imageloader.js"></script>
   <script src="./../../../JS/Whatsapp.js"></script>
   <!-- Tour Nav (pill bar) -->
-  <nav class="tour-nav" id="tourNav">
+  <div class="tour-nav-wrap">
+    <div class="scroll-hint">← swipe to see more →</div>
+    <nav class="tour-nav" id="tourNav">
     <a class="tour-pill" href="Cafe.html">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M6 2v4M9 2v4M12 2v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -589,6 +689,29 @@
       <span>Pool</span>
     </a>
   </nav>
+  </div>
+  <script>
+    // Back button
+    document.getElementById('backBtn').addEventListener('click', () => {
+      window.location.href = "./../../../Subpages/Tower_A.html";
+    });
+
+    // Scroll hint
+    (function(){
+      const nav = document.getElementById('tourNav');
+      const hint = document.querySelector('.scroll-hint');
+      if (!nav || !hint) return;
+      function checkScroll() {
+        if (nav.scrollWidth > nav.clientWidth) {
+          hint.style.display = 'block';
+        } else {
+          hint.style.display = 'none';
+        }
+      }
+      checkScroll();
+      window.addEventListener('resize', checkScroll);
+    })();
+  </script>
 </body>
 
 </html>
