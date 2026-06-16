@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MDB The Lutyens</title>
     <link rel="stylesheet" href="./../wbn05d6fbh.css">
     <link rel="stylesheet" href="./../JS/CSS/Floor-Hint.css">
@@ -510,9 +511,17 @@
            MOBILE
            ═══════════════════════════════════════════════ */
         @media (max-width: 768px) {
+            /* ── LEFT PANEL → compact vertical stack, bottom-left above jumpbar ── */
             .left-panel {
-                top: auto; bottom: 110px; left: 12px; right: 12px;
-                transform: none; width: auto; flex-direction: row; gap: 8px;
+                top: auto;
+                bottom: 82px;
+                left: 12px;
+                right: auto;
+                transform: none;
+                width: auto;
+                max-width: 160px;
+                flex-direction: column;
+                gap: 6px;
                 animation: slide-in-bottom 0.8s var(--ease-out) 0.6s forwards;
             }
             @keyframes slide-in-bottom {
@@ -520,29 +529,74 @@
                 to { opacity: 1; transform: translateY(0); }
             }
             .panel-header { display: none; }
-            .property-type { flex: 1; padding: 12px 14px; gap: 10px; background: var(--surface-2); }
-            .property-type:hover { transform: none; background: var(--surface-3); }
-            .pt-icon { width: 36px; height: 36px; }
-            .pt-icon svg { width: 18px; height: 18px; }
-            .pt-name { font-size: 15px; }
-            .pt-sub { font-size: 9px; letter-spacing: 1.4px; }
+
+            /* Compact card: icon + name only */
+            .property-type {
+                flex: none;
+                padding: 7px 12px 7px 9px;
+                gap: 8px;
+                background: rgba(255,255,255,0.82);
+                border-radius: 10px;
+                min-width: 0;
+                backdrop-filter: blur(16px) saturate(1.4);
+                -webkit-backdrop-filter: blur(16px) saturate(1.4);
+            }
+            .property-type:hover { transform: none; background: rgba(255,255,255,0.96); }
+            .pt-icon { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; }
+            .pt-icon svg { width: 15px; height: 15px; }
+            .pt-text { gap: 0; }
+            .pt-name { font-size: 12.5px; }
+            .pt-sub { display: none; }
             .pt-arrow { display: none; }
-            .top-controls { top: 12px; right: 12px; gap: 6px; }
-            .control-btn { padding: 10px; width: 38px; height: 38px; justify-content: center; }
+            .pt-shimmer { display: none; }
+
+            /* ── TOP CONTROLS — smaller on mobile ── */
+            .top-controls { top: 12px; right: 12px; gap: 5px; }
+            .control-btn { padding: 0; width: 32px; height: 32px; justify-content: center; border-radius: 9px; }
+            .control-btn svg { width: 14px; height: 14px; }
             .control-btn span { display: none; }
-            .menu-btn { width: 38px; height: 38px; }
-            .dropdown-menu { top: 60px; right: 12px; width: calc(100vw - 24px); max-width: 300px; }
-            .jumpbar { bottom: 14px; padding: 4px; }
-            .jumpbar-brand { padding: 0 12px 0 14px; height: 36px; }
+            .menu-btn { width: 32px; height: 32px; border-radius: 9px; }
+            .menu-btn-lines { width: 15px; height: 11px; }
+            .dropdown-menu { top: 52px; right: 12px; width: calc(100vw - 24px); max-width: 300px; }
+
+            /* ── JUMPBAR — icon + label ── */
+            .jumpbar { bottom: 14px; padding: 4px 6px; }
+            .jumpbar-brand { padding: 0 12px 0 14px; height: 40px; }
             .jumpbar-brand-line { font-size: 7px; letter-spacing: 2.5px; }
             .jumpbar-brand-name { font-size: 13px; }
-            .jumpbar-item { padding: 8px 12px; gap: 0; }
-            .jumpbar-item span { display: none; }
-            .jumpbar-item svg { width: 16px; height: 16px; }
+            .jumpbar-item {
+                padding: 6px 10px;
+                gap: 0;
+                flex-direction: column;
+                align-items: center;
+                border-radius: 14px;
+                min-width: 48px;
+            }
+            .jumpbar-item svg { width: 16px; height: 16px; margin-bottom: 3px; }
+            .jumpbar-item span {
+                display: block;
+                font-size: 9px;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                font-weight: 500;
+                line-height: 1;
+                white-space: nowrap;
+            }
+
+            /* ── ENQUIRY BUTTON ── */
+            .enquiry-btn { font-size: 9px; padding: 14px 7px; letter-spacing: 1.5px; }
         }
+
         @media (max-width: 420px) {
             .jumpbar-brand { display: none; }
-            .jumpbar-item { padding: 8px 10px; }
+            .jumpbar-item { padding: 5px 8px; min-width: 40px; }
+            .jumpbar-item span { font-size: 8px; }
+            .jumpbar-item svg { width: 15px; height: 15px; }
+            .left-panel { bottom: 76px; max-width: 145px; gap: 5px; }
+            .property-type { padding: 6px 10px 6px 8px; gap: 7px; }
+            .pt-name { font-size: 11.5px; }
+            .pt-icon { width: 26px; height: 26px; }
+            .pt-icon svg { width: 13px; height: 13px; }
         }
     
         /* ═══════════════════════════════════════════════
